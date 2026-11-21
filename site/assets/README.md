@@ -1,1 +1,1 @@
-Reserved for shared styles, scripts, and self-hosted assets in a later phase. Existing document resources are preserved as-is in phase one.
+Shared styles and scripts are served from `css/` and `js/`. Self-hosted fonts and MathJax are under `fonts/` and `mathjax/`; see `THIRD_PARTY_NOTICES.md` for versions and license files. Add future shared runtime assets here and keep their references relative so the site works under the GitHub Pages project path.
