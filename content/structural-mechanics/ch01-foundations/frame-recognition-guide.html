@@ -1,0 +1,403 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<script type="application/json" id="doc-meta">
+{
+  "title": "刚架识图指南",
+  "course": "structural-mechanics",
+  "chapter": "ch01-foundations",
+  "tags": [
+    "平面刚架",
+    "结构识图",
+    "支座"
+  ],
+  "prerequisites": [],
+  "related": [],
+  "source": "待补充",
+  "review": {
+    "status": "unreviewed",
+    "by": "",
+    "date": ""
+  },
+  "created": "2026-11-21"
+}
+</script>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>结构力学：平面刚架识图指南</title>
+<style>
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: #f3f5f8;
+  color: #263445;
+  font-family: "Microsoft YaHei", sans-serif;
+  line-height: 1.7;
+}
+header {
+  background: #172c46;
+  color: white;
+  padding: 35px 20px;
+  text-align: center;
+}
+header h1 { margin: 0 0 10px; }
+header p { color: #c5d4e5; margin: 0; }
+main {
+  max-width: 1100px;
+  margin: 25px auto;
+  padding: 0 16px;
+}
+h2 {
+  border-left: 5px solid #3478c7;
+  padding-left: 12px;
+  margin-top: 35px;
+}
+h3 { margin-bottom: 8px; }
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit,minmax(280px,1fr));
+  gap: 16px;
+}
+.card {
+  background: white;
+  border-radius: 12px;
+  padding: 18px;
+  box-shadow: 0 3px 12px #0000000c;
+}
+svg {
+  width: 100%;
+  height: 135px;
+  display: block;
+  margin: 5px auto;
+}
+.beam {
+  stroke: #263e58;
+  stroke-width: 5;
+  stroke-linecap: round;
+}
+.support {
+  fill: #e5edf7;
+  stroke: #344c68;
+  stroke-width: 2;
+}
+.ground {
+  stroke: #52667d;
+  stroke-width: 2;
+}
+.node { fill: #fff; stroke: #263e58; stroke-width: 2; }
+.explain { color: #526174; font-size: 14px; }
+.key {
+  background: #eaf2fc;
+  padding: 12px;
+  border-radius: 8px;
+  margin-top: 10px;
+  font-size: 14px;
+}
+.warning {
+  background: #fff4df;
+  border-left: 4px solid #e7a13a;
+  padding: 13px;
+  border-radius: 6px;
+  margin: 15px 0;
+}
+.good {
+  background: #e8f5ed;
+  border-left: 4px solid #3a9b65;
+  padding: 13px;
+  border-radius: 6px;
+}
+table {
+  border-collapse: collapse;
+  width: 100%;
+  background: white;
+  margin: 15px 0;
+}
+th,td {
+  border: 1px solid #dce2e9;
+  padding: 10px;
+  text-align: left;
+}
+th { background: #eaf0f7; }
+code {
+  background: #edf1f6;
+  padding: 2px 5px;
+  border-radius: 4px;
+}
+footer {
+  text-align: center;
+  padding: 30px;
+  color: #758397;
+}
+</style>
+</head>
+
+<body>
+<header>
+  <h1>平面刚架结构识图指南</h1>
+  <p>从支座符号、节点连接到自然语言描述</p>
+</header>
+
+<main>
+
+<h2>一、先理解平面刚架的三个自由度</h2>
+<div class="card">
+  对于平面刚架中的一个节点，通常考虑三个自由度：
+  <ul>
+    <li><b>水平位移：</b>沿 X 轴移动，记作 u。</li>
+    <li><b>竖向位移：</b>沿 Y 轴移动，记作 v。</li>
+    <li><b>转角：</b>绕垂直于结构平面的轴转动，记作 θ。</li>
+  </ul>
+  <div class="key">
+    识别支座的核心：观察它限制了哪些运动，又允许哪些运动。
+  </div>
+</div>
+
+<h2>二、常见支座的识别</h2>
+<div class="grid">
+
+<!-- 固定支座 -->
+<div class="card">
+<h3>1. 固定支座（固定端）</h3>
+<svg viewBox="0 0 300 135">
+  <path d="M65 20 V110" stroke="#52667d" stroke-width="7"/>
+  <path d="M45 30 L65 45 M45 50 L65 65 M45 70 L65 85 M45 90 L65 105"
+        stroke="#52667d" stroke-width="2"/>
+  <path d="M65 68 H250" class="beam"/>
+</svg>
+<b>识别特征：</b>
+<ul>
+<li>杆件端部直接嵌固在墙体或固定基础中。</li>
+<li>没有允许转动的圆形铰接符号。</li>
+<li>通常用粗线墙体和斜线表示。</li>
+</ul>
+<div class="good">
+约束：u=0，v=0，θ=0。<br>
+三个自由度全部受到限制。
+</div>
+<p class="explain">自然语言：杆件左端为固定支座，水平位移、竖向位移和转动均受到约束。</p>
+</div>
+
+<!-- 铰支座 -->
+<div class="card">
+<h3>2. 固定铰支座</h3>
+<svg viewBox="0 0 300 135">
+  <path d="M45 60 H150" class="beam"/>
+  <circle cx="150" cy="60" r="6" class="node"/>
+  <path d="M150 68 L125 105 H175 Z" class="support"/>
+  <path d="M110 105 H190" class="ground"/>
+  <path d="M115 105 L105 115 M135 105 L125 115 M155 105 L145 115 M175 105 L165 115"
+        class="ground"/>
+</svg>
+<b>识别特征：</b>
+<ul>
+<li>杆件端部有一个小圆圈或铰接节点。</li>
+<li>下方通常有三角形支承结构。</li>
+<li>三角形下方是基础线。</li>
+</ul>
+<div class="good">
+约束：u=0，v=0，θ可以转动。<br>
+限制两个平动自由度。
+</div>
+<p class="explain">自然语言：杆件左端为固定铰支座，水平和竖向位移受到限制，但允许转动。</p>
+</div>
+
+<!-- 滚动支座 -->
+<div class="card">
+<h3>3. 滚动支座（活动铰支座）</h3>
+<svg viewBox="0 0 300 135">
+  <path d="M45 48 H150" class="beam"/>
+  <circle cx="150" cy="48" r="6" class="node"/>
+  <path d="M150 56 L125 85 H175 Z" class="support"/>
+  <circle cx="140" cy="94" r="6" class="support"/>
+  <circle cx="160" cy="94" r="6" class="support"/>
+  <path d="M110 105 H190" class="ground"/>
+  <path d="M115 105 L105 115 M135 105 L125 115 M155 105 L145 115 M175 105 L165 115"
+        class="ground"/>
+</svg>
+<b>识别特征：</b>
+<ul>
+<li>杆件端部有铰接符号。</li>
+<li>三角形下方有滚轮或小圆圈。</li>
+<li>滚轮表示支座允许沿支承面方向移动。</li>
+</ul>
+<div class="good">
+水平基础上的滚动支座：v=0，u和θ可以变化。
+</div>
+<p class="explain">自然语言：杆件右端为水平面上的滚动支座，限制竖向位移，允许水平移动和转动。</p>
+</div>
+
+<!-- 滑动导向 -->
+<div class="card">
+<h3>4. 导向支座（滑动支承）</h3>
+<svg viewBox="0 0 300 135">
+  <path d="M60 65 H180" class="beam"/>
+  <circle cx="180" cy="65" r="5" class="node"/>
+  <path d="M195 20 V110 M207 20 V110" class="ground"/>
+  <path d="M180 48 L195 48 M180 82 L195 82" stroke="#3478c7" stroke-width="4"/>
+  <path d="M215 40 V90" stroke="#52667d" stroke-width="2"/>
+</svg>
+<b>识别特征：</b>
+<ul>
+<li>杆件端部与竖直或水平导向面相连。</li>
+<li>有滚轮、滑槽或平行导轨符号。</li>
+<li>需要观察导向方向。</li>
+</ul>
+<div class="warning">
+导向支座的约束取决于具体构造。对于理想滑动导向，如果限制端部转动，则还需要 θ=0。
+</div>
+<p class="explain">自然语言：杆件端部通过滑动导向支座与竖直导轨连接，允许沿导轨方向移动，限制垂直于导轨的位移；是否限制转动需要根据图示确定。</p>
+</div>
+
+</div>
+
+<h2>三、常见节点连接方式</h2>
+<div class="grid">
+
+<div class="card">
+<h3>1. 刚性连接节点</h3>
+<svg viewBox="0 0 300 135">
+  <path d="M45 65 H255 M150 65 V120" class="beam"/>
+  <circle cx="150" cy="65" r="5" fill="#263e58"/>
+</svg>
+<b>识别特征：</b>
+<ul>
+<li>梁和柱在节点处直接连接。</li>
+<li>没有画出圆形铰接符号。</li>
+<li>梁柱之间的夹角保持不变。</li>
+</ul>
+<div class="good">
+能够传递弯矩、剪力和轴力。<br>
+节点各连接杆件的转角协调。
+</div>
+<p class="explain">自然语言：梁与柱在交点处刚性连接，节点能够传递弯矩。</p>
+</div>
+
+<div class="card">
+<h3>2. 铰接节点</h3>
+<svg viewBox="0 0 300 135">
+  <path d="M45 65 H150 M150 65 V120" class="beam"/>
+  <circle cx="150" cy="65" r="8" fill="white" stroke="#263e58" stroke-width="3"/>
+</svg>
+<b>识别特征：</b>
+<ul>
+<li>连接位置出现明显的小圆圈。</li>
+<li>圆圈通常表示铰接。</li>
+<li>连接两侧杆件可以发生相对转动。</li>
+</ul>
+<div class="good">
+理想铰接不能传递弯矩，但可以传递力。
+</div>
+<p class="explain">自然语言：梁与柱在节点处通过理想铰连接，节点不传递弯矩，允许相对转动。</p>
+</div>
+
+<div class="card">
+<h3>3. 杆件内部铰</h3>
+<svg viewBox="0 0 300 135">
+  <path d="M30 65 H140 M160 65 H270" class="beam"/>
+  <circle cx="150" cy="65" r="9" fill="white" stroke="#263e58" stroke-width="3"/>
+</svg>
+<b>识别特征：</b>
+<ul>
+<li>圆圈出现在杆件中间，而不是结构外部支座处。</li>
+<li>表示同一杆件在该处存在弯矩释放。</li>
+<li>铰两侧可以相对转动。</li>
+</ul>
+<div class="good">
+内部铰处弯矩 M=0。
+</div>
+<p class="explain">自然语言：该杆件中部设置一个内部铰，铰接处不传递弯矩。</p>
+</div>
+
+<div class="card">
+<h3>4. 自由端</h3>
+<svg viewBox="0 0 300 135">
+  <path d="M35 65 H250" class="beam"/>
+  <circle cx="250" cy="65" r="4" class="node"/>
+</svg>
+<b>识别特征：</b>
+<ul>
+<li>杆件端部没有支座或其他构件连接。</li>
+<li>端部可以自由移动和转动。</li>
+</ul>
+<div class="good">
+无外部约束；若端部没有施加外力或力偶，则端部弯矩和剪力为零。
+</div>
+<p class="explain">自然语言：该杆件右端为自由端，没有支座约束。</p>
+</div>
+
+</div>
+
+<h2>四、最容易混淆的地方</h2>
+<div class="card">
+<table>
+<tr>
+<th>名称</th><th>限制平动</th><th>限制转动</th><th>能否传递弯矩</th>
+</tr>
+<tr><td>固定支座</td><td>水平、竖向</td><td>是</td><td>能</td></tr>
+<tr><td>固定铰支座</td><td>水平、竖向</td><td>否</td><td>不能</td></tr>
+<tr><td>水平滚动支座</td><td>竖向</td><td>否</td><td>不能</td></tr>
+<tr><td>刚性节点</td><td>节点位移协调</td><td>连接杆件转角协调</td><td>能</td></tr>
+<tr><td>理想铰接节点</td><td>节点位置协调</td><td>允许相对转动</td><td>不能</td></tr>
+</table>
+<div class="warning">
+特别注意：
+<br>
+① 固定铰支座 ≠ 固定支座。
+<br>
+② 铰支座 ≠ 内部铰。前者是结构与基础的连接，后者是结构内部杆件之间的连接。
+<br>
+③ 刚性节点不等于固定支座。梁柱刚性连接处仍然可以整体发生位移和转动。
+</div>
+</div>
+
+<h2>五、怎样把图片转换成自然语言？</h2>
+<div class="card">
+<h3>建议采用五步识图法</h3>
+<ol>
+<li><b>找节点：</b>先找 A、B、C、D 等字母标注的位置。</li>
+<li><b>找杆件：</b>确定哪些节点之间有杆件，区分水平杆、竖直杆和斜杆。</li>
+<li><b>找支座：</b>观察结构边界处的符号，判断固定、铰接、滚动或导向约束。</li>
+<li><b>找连接：</b>观察梁柱交点是否有铰接圆圈，判断刚性连接还是铰接。</li>
+<li><b>找荷载和尺寸：</b>记录集中力、均布荷载、力偶及杆件长度。</li>
+</ol>
+</div>
+
+<h2>六、自然语言描述模板</h2>
+<div class="card">
+<p>例如，看到一个由两根水平梁和一根竖直柱组成的刚架，可以这样描述：</p>
+<div class="good">
+这是一个平面刚架结构，由水平杆件 AB、BC 和竖直杆件 BD 组成。
+
+A 端为固定铰支座，限制水平和竖向位移，但允许转动。
+
+C 端为滚动支座，支承面为水平面，限制竖向位移，允许水平移动和转动。
+
+D 端为固定支座，限制水平位移、竖向位移和转动。
+
+B 点为梁柱刚性连接节点，连接处能够传递弯矩。
+
+各杆件的长度及抗弯刚度分别为……（根据图中标注填写）。
+</div>
+</div>
+
+<h2>七、识图时的最终检查清单</h2>
+<div class="card">
+<label><input type="checkbox"> 是否识别了全部节点？</label><br>
+<label><input type="checkbox"> 是否识别了全部杆件及其连接关系？</label><br>
+<label><input type="checkbox"> 是否区分固定支座与固定铰支座？</label><br>
+<label><input type="checkbox"> 是否识别了滚动支座的允许移动方向？</label><br>
+<label><input type="checkbox"> 是否区分了刚性节点和铰接节点？</label><br>
+<label><input type="checkbox"> 是否识别了内部铰？</label><br>
+<label><input type="checkbox"> 是否记录了杆长和刚度？</label><br>
+<label><input type="checkbox"> 是否记录了荷载的方向、大小和作用范围？</label><br>
+<label><input type="checkbox"> 是否将不确定的符号标记出来，而不是猜测？</label>
+</div>
+
+</main>
+<footer>
+结构力学学习辅助 · 平面刚架识图
+</footer>
+</body>
+</html>

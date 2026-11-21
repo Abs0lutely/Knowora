@@ -1,0 +1,674 @@
+<!doctype html><html><head>
+<script type="application/json" id="doc-meta">
+{
+  "title": "LaTeX 高数教程",
+  "course": "tools",
+  "chapter": "ch01-latex-basics",
+  "tags": [
+    "LaTeX",
+    "数学公式",
+    "高等数学"
+  ],
+  "prerequisites": [],
+  "related": [],
+  "source": "待补充",
+  "review": {
+    "status": "unreviewed",
+    "by": "",
+    "date": ""
+  },
+  "created": "2026-11-21"
+}
+</script>
+<meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>LaTeX 高数教程</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@600;700&display=swap">
+<style>
+/* Layout: 左对齐的单栏教程。顶部是可输入的实验台，下面按章节切换，每行「说明 / 效果 / 代码」，最后一章是填空练习。 */
+:root {
+  --bg: #f3f5f7;
+  --surface: #ffffff;
+  --fg: #17202b;
+  --muted: #5b6877;
+  --line: #d9dfe6;
+  --accent: #1f6f8b;
+  --accent-fg: #ffffff;
+  --accent-soft: #dcebf1;
+  --code-bg: #eaeff3;
+  --ok: #1b7f4b;
+  --bad: #b3401f;
+  --font-body: 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', system-ui, sans-serif;
+  --font-display: 'Noto Serif SC', 'Songti SC', 'SimSun', serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f1419;
+    --surface: #171e26;
+    --fg: #e6ebf1;
+    --muted: #98a5b4;
+    --line: #2a3440;
+    --accent: #5bb6d3;
+    --accent-fg: #08202b;
+    --accent-soft: #1b3340;
+    --code-bg: #1e2731;
+    --ok: #5fcf95;
+    --bad: #f08b6b;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f1419;
+  --surface: #171e26;
+  --fg: #e6ebf1;
+  --muted: #98a5b4;
+  --line: #2a3440;
+  --accent: #5bb6d3;
+  --accent-fg: #08202b;
+  --accent-soft: #1b3340;
+  --code-bg: #1e2731;
+  --ok: #5fcf95;
+  --bad: #f08b6b;
+  color-scheme: dark;
+}
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.7;
+  padding-block: 28px 64px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0 0 auto;
+  height: env(safe-area-inset-top, 0px);
+  background: var(--bg);
+  z-index: 10;
+}
+.wrap { max-width: 960px; margin-inline: auto; }
+button, textarea, input { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* header */
+.top { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 340px); gap: 12px 32px; align-items: center; margin-bottom: 28px; }
+.top h1 { font-family: var(--font-display); font-weight: 700; font-size: clamp(1.7rem, 4.5vw, 2.4rem); line-height: 1.25; margin: 0 0 8px; text-wrap: balance; }
+.top p { margin: 0; color: var(--muted); max-width: 34em; }
+.hero-math { font-size: 1.5rem; overflow-x: auto; min-width: 0; }
+@media (max-width: 720px) { .top { grid-template-columns: minmax(0, 1fr); } }
+
+/* lab */
+.lab { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px; display: grid; gap: 12px; }
+.lab h2 { margin: 0; font-family: var(--font-display); font-size: 1.15rem; }
+.lab .hint { margin: 0; color: var(--muted); font-size: .9rem; }
+textarea#src { width: 100%; box-sizing: border-box; min-height: 88px; resize: vertical; font-family: var(--font-mono); font-size: 1rem; line-height: 1.55; background: var(--code-bg); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 3px 10px; font-size: .85rem; cursor: pointer; }
+.chip:hover { border-color: var(--accent); color: var(--accent); }
+.pv { min-height: 72px; padding: 12px 14px; border: 1px dashed var(--line); border-radius: 8px; overflow-x: auto; overflow-y: hidden; font-size: 1.3rem; }
+.pv.empty { color: var(--muted); font-size: .95rem; }
+.lab-bar { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; }
+.lab-bar label { display: inline-flex; gap: 6px; align-items: center; color: var(--muted); font-size: .9rem; cursor: pointer; }
+
+.btn { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 4px 12px; font-size: .85rem; cursor: pointer; white-space: nowrap; }
+.btn:hover { border-color: var(--accent); }
+.btn.pri { background: var(--accent); border-color: var(--accent); color: var(--accent-fg); }
+
+/* chapter nav */
+nav#tabs { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); display: flex; gap: 2px; overflow-x: auto; border-bottom: 1px solid var(--line); margin-top: 28px; }
+nav#tabs button { background: none; border: 0; border-bottom: 2px solid transparent; padding: 10px 14px; cursor: pointer; white-space: nowrap; color: var(--muted); }
+nav#tabs button:hover { color: var(--fg); }
+nav#tabs button[aria-current="page"] { color: var(--accent); border-bottom-color: var(--accent); font-weight: 500; }
+
+/* chapter */
+#panel { padding-top: 22px; }
+#panel h2 { font-family: var(--font-display); font-size: 1.5rem; margin: 0 0 6px; }
+#panel h3 { font-family: var(--font-display); font-size: 1.05rem; margin: 26px 0 10px; }
+.intro, .tip { margin: 6px 0 0; max-width: 40em; }
+.tip { color: var(--muted); font-size: .94rem; }
+.tip b { color: var(--fg); font-weight: 500; }
+.intro code, .tip code, .feedback code { font-family: var(--font-mono); background: var(--code-bg); padding: 1px 5px; border-radius: 4px; font-size: .88em; }
+.rows { margin-top: 18px; border-top: 1px solid var(--line); }
+.row { display: grid; grid-template-columns: 130px minmax(0, 1fr) minmax(0, 1fr); gap: 8px 22px; align-items: center; padding: 14px 0; border-bottom: 1px solid var(--line); }
+.lbl { color: var(--muted); font-size: .9rem; }
+.out { font-size: 1.2rem; overflow-x: auto; overflow-y: hidden; min-width: 0; padding-block: 2px; }
+.out mjx-container[jax="SVG"][display="true"] { margin: 0 !important; text-align: left !important; }
+.pv mjx-container[jax="SVG"][display="true"] { margin: 0 !important; }
+.src { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; min-width: 0; }
+code.tex { font-family: var(--font-mono); font-size: .82rem; background: var(--code-bg); padding: 6px 9px; border-radius: 6px; flex: 1 1 100%; min-width: 0; overflow-x: auto; white-space: pre; }
+.acts { display: flex; gap: 6px; }
+@media (max-width: 720px) { .row { grid-template-columns: minmax(0, 1fr); } }
+
+/* greek tiles */
+.tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: 8px; }
+.tile { display: grid; justify-items: center; gap: 2px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 10px 6px 8px; cursor: pointer; min-width: 0; }
+.tile:hover { border-color: var(--accent); background: var(--accent-soft); }
+.tout { font-size: 1.6rem; line-height: 1.3; height: 2.1rem; display: flex; align-items: center; }
+.tcode { font-family: var(--font-mono); font-size: .76rem; color: var(--muted); }
+
+/* practice */
+.score { margin: 10px 0 0; color: var(--muted); font-variant-numeric: tabular-nums; }
+.score b { color: var(--ok); font-weight: 700; }
+.ex { padding: 20px 0; border-bottom: 1px solid var(--line); display: grid; gap: 10px; }
+.ex h3 { margin: 0; }
+.ex.done h3::after { content: "  已完成"; color: var(--ok); font-family: var(--font-body); font-size: .85rem; font-weight: 500; }
+.ex .target { font-size: 1.35rem; overflow-x: auto; overflow-y: hidden; }
+.ex .target mjx-container[jax="SVG"][display="true"], .ex .mine mjx-container[jax="SVG"][display="true"] { margin: 0 !important; text-align: left !important; }
+.ex input { width: 100%; box-sizing: border-box; font-family: var(--font-mono); font-size: 1rem; background: var(--code-bg); border: 1px solid var(--line); border-radius: 8px; padding: 9px 12px; }
+.ex .mine { min-height: 48px; border: 1px dashed var(--line); border-radius: 8px; padding: 8px 12px; overflow-x: auto; overflow-y: hidden; font-size: 1.15rem; }
+.ex .mine.empty { color: var(--muted); font-size: .9rem; }
+.ex-bar { display: flex; flex-wrap: wrap; gap: 8px; }
+.feedback { margin: 0; min-height: 1.6em; font-size: .94rem; }
+.feedback.ok { color: var(--ok); }
+.feedback.bad { color: var(--bad); }
+.feedback.info { color: var(--muted); }
+
+#toast { position: fixed; left: 50%; bottom: calc(18px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--fg); color: var(--bg); padding: 7px 16px; border-radius: 999px; font-size: .88rem; opacity: 0; pointer-events: none; transition: opacity .15s; z-index: 20; max-width: 90vw; }
+#toast.on { opacity: 1; }
+@media (prefers-reduced-motion: reduce) { #toast { transition: none; } }
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div>
+      <h1>高等数学 LaTeX 互动教程</h1>
+      <p>从极限、导数、积分到级数和矩阵，每个公式都能在实验台里改着看。最后一章有填空练习。</p>
+    </div>
+    <div class="hero-math" id="hero" aria-hidden="true"></div>
+  </header>
+
+  <section class="lab" id="editor" aria-label="实验台">
+    <h2>实验台</h2>
+    <p class="hint">在这里输入代码，下方立即显示效果。点击按钮可以插入常用结构，光标会停在第一个空位。</p>
+    <textarea id="src" rows="3" spellcheck="false" autocapitalize="off" autocomplete="off" aria-label="LaTeX 代码"></textarea>
+    <div class="chips" id="chips"></div>
+    <div class="pv" id="pv" aria-live="polite"></div>
+    <div class="lab-bar">
+      <button class="btn pri" type="button" id="copy-src">复制代码</button>
+      <button class="btn" type="button" id="clear-src">清空</button>
+      <label for="disp"><input type="checkbox" id="disp" checked> 独立公式样式</label>
+    </div>
+  </section>
+
+  <nav id="tabs" aria-label="章节"></nav>
+  <section id="panel"></section>
+</div>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+window.MathJax = {
+  options: { enableMenu: false },
+  svg: { fontCache: 'local' },
+  startup: {
+    typeset: false,
+    ready: function () {
+      MathJax.startup.defaultReady();
+      if (window.initTutorial) { window.initTutorial(); } else { window.__mjReady = true; }
+    }
+  }
+};
+</script>
+<script>
+(function () {
+  'use strict';
+  var $ = function (s) { return document.querySelector(s); };
+  function el(tag, cls, txt) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (txt != null) e.textContent = txt;
+    return e;
+  }
+
+  /* ---------- MathJax bridge ---------- */
+  var mjReady = false;
+  var queue = [];
+  function typeset(node, tex, display) {
+    if (!mjReady) { node.textContent = tex; queue.push([node, tex, display]); return; }
+    try {
+      var r = window.MathJax.tex2svg(tex, { display: !!display });
+      node.textContent = '';
+      node.appendChild(r);
+    } catch (e) { node.textContent = tex; }
+  }
+  window.initTutorial = function () {
+    mjReady = true;
+    try { document.head.appendChild(window.MathJax.svgStylesheet()); } catch (e) {}
+    queue.splice(0).forEach(function (q) { typeset(q[0], q[1], q[2]); });
+  };
+
+  /* ---------- helpers ---------- */
+  var toastTimer;
+  function toast(msg) {
+    var t = $('#toast');
+    t.textContent = msg;
+    t.classList.add('on');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { t.classList.remove('on'); }, 1600);
+  }
+  function copyText(text, btn) {
+    var label = btn.dataset.label || btn.textContent;
+    btn.dataset.label = label;
+    function done(ok) {
+      btn.textContent = ok ? '已复制' : '请手动复制';
+      setTimeout(function () { btn.textContent = label; }, 1200);
+    }
+    function fallback() {
+      try {
+        var ta = document.createElement('textarea');
+        ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+        document.body.appendChild(ta); ta.select();
+        var ok = document.execCommand('copy');
+        ta.remove(); done(ok);
+      } catch (e) { done(false); }
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function () { done(true); }, fallback);
+    } else { fallback(); }
+  }
+  function parseRows(raw) {
+    return raw.split('\n').map(function (l) { return l.trim(); }).filter(Boolean).map(function (l) {
+      var i = l.indexOf(' ::: ');
+      return [l.slice(0, i), l.slice(i + 5)];
+    });
+  }
+  var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------- lab ---------- */
+  var ed = $('#src'), pv = $('#pv'), dispChk = $('#disp');
+  var DEFAULT = String.raw`\int_0^{+\infty} e^{-x}\,dx = 1`;
+  try { ed.value = localStorage.getItem('lx-draft') || DEFAULT; } catch (e) { ed.value = DEFAULT; }
+  function renderEditor() {
+    var v = ed.value.trim();
+    try { localStorage.setItem('lx-draft', ed.value); } catch (e) {}
+    if (!v) { pv.textContent = '预览会显示在这里'; pv.classList.add('empty'); return; }
+    pv.classList.remove('empty');
+    typeset(pv, v, dispChk.checked);
+  }
+  var edTimer;
+  ed.addEventListener('input', function () { clearTimeout(edTimer); edTimer = setTimeout(renderEditor, 90); });
+  dispChk.addEventListener('change', renderEditor);
+  $('#copy-src').addEventListener('click', function () { copyText(ed.value, this); });
+  $('#clear-src').addEventListener('click', function () { ed.value = ''; renderEditor(); ed.focus(); });
+
+  function insertSnippet(s, focus) {
+    var i = s.indexOf('§');
+    var text = s.replace('§', '');
+    var a = ed.selectionStart, b = ed.selectionEnd;
+    if (a == null) { a = b = ed.value.length; }
+    ed.value = ed.value.slice(0, a) + text + ed.value.slice(b);
+    var pos = a + (i < 0 ? text.length : i);
+    if (focus) ed.focus({ preventScroll: true });
+    ed.setSelectionRange(pos, pos);
+    renderEditor();
+  }
+  var CHIPS = String.raw`
+分数 ::: \frac{§}{}
+上标 ::: ^{§}
+下标 ::: _{§}
+根号 ::: \sqrt{§}
+括号 ::: \left( § \right)
+求和 ::: \sum_{n=1}^{\infty} §
+积分 ::: \int_{a}^{b} § \,dx
+极限 ::: \lim_{x\to §}
+偏导 ::: \frac{\partial §}{\partial x}
+矩阵 ::: \begin{pmatrix} § & \\ & \end{pmatrix}
+分段 ::: \begin{cases} §, & \\ , & \end{cases}
+无穷 ::: \infty
+`;
+  parseRows(CHIPS).forEach(function (c) {
+    var b = el('button', 'chip', c[0]);
+    b.type = 'button';
+    b.addEventListener('click', function () { insertSnippet(c[1], true); });
+    $('#chips').appendChild(b);
+  });
+
+  /* ---------- chapters ---------- */
+  var CH = [
+    {
+      id: 'basics', name: '基础',
+      intro: '公式写在美元符号之间：行内公式用 <code>$...$</code>，单独成行的用 <code>$$...$$</code>。每一行左边是效果，右边是代码，点“试一试”会把代码送到上方实验台。',
+      tip: '<b>注意：</b>上标、下标超过一个字符时必须加花括号。<code>x^{10}</code> 是 x 的十次方，<code>x^10</code> 只会把 1 放在上面。',
+      groups: [{ rows: String.raw`
+上标 ::: x^{2}
+下标 ::: a_{n}
+上下标一起 ::: x_{i}^{2}
+多字符上标 ::: e^{-x^{2}}
+分数 ::: \frac{a+b}{2}
+根号 ::: \sqrt{x^2+y^2}
+n 次根号 ::: \sqrt[3]{x}
+绝对值 ::: |x-1|<\varepsilon
+自动缩放括号 ::: \left( \frac{a}{b} \right)^2
+运算符 ::: a\times b,\ a\div b,\ a\cdot b,\ a\pm b
+关系符号 ::: a\leq b,\ a\geq b,\ a\neq b,\ a\approx b
+省略号 ::: a_1+a_2+\cdots+a_n
+文字说明 ::: \text{for } x>0,\ \ln x \text{ is defined}
+` }]
+    },
+    {
+      id: 'greek', name: '希腊字母',
+      intro: '点击任意一个字母，它的代码会插入到上方实验台光标处。大写字母只有部分和拉丁字母不同，所以只列出常用的。',
+      tip: '<b>注意：</b>ε 有两种写法：<code>\\epsilon</code> 是 ϵ，<code>\\varepsilon</code> 是 ε。高数里的 ε-δ 语言通常用后者。φ 同理，<code>\\phi</code> 和 <code>\\varphi</code> 不一样。',
+      groups: [
+        { t: '小写', tiles: 'alpha beta gamma delta epsilon varepsilon zeta eta theta lambda mu nu xi pi rho sigma tau phi varphi chi psi omega' },
+        { t: '大写', tiles: 'Gamma Delta Theta Lambda Xi Pi Sigma Phi Psi Omega' }
+      ]
+    },
+    {
+      id: 'limit', name: '极限与连续',
+      intro: '极限的核心是 <code>\\lim</code> 加下标，趋近箭头用 <code>\\to</code>。',
+      tip: '<b>注意：</b>在独立公式里，lim 的下标显示在 lim 正下方；在行内公式（<code>$...$</code>）里会缩到右下角。想在行内也放下方，写 <code>\\lim\\limits_{x\\to 0}</code>。',
+      groups: [{ rows: String.raw`
+重要极限 ::: \lim_{x\to 0}\frac{\sin x}{x}=1
+自然常数 e ::: \lim_{x\to\infty}\left(1+\frac{1}{x}\right)^{x}=e
+数列极限 ::: \lim_{n\to\infty}a_n=A
+单侧极限 ::: \lim_{x\to 0^{+}}\ln x=-\infty
+正负无穷 ::: x\to+\infty,\quad x\to-\infty
+小 o ::: \sin x=x+o(x),\quad x\to 0
+大 O ::: f(x)=O(x^{2})
+等价无穷小 ::: \sin x\sim x,\quad e^x-1\sim x
+ε-δ 语言 ::: \forall\varepsilon>0,\ \exists\delta>0,\ 0<|x-x_0|<\delta\Rightarrow|f(x)-A|<\varepsilon
+连续 ::: \lim_{x\to x_0}f(x)=f(x_0)
+` }]
+    },
+    {
+      id: 'deriv', name: '导数与微分',
+      intro: '一阶、二阶导数直接用撇号；高阶导数和偏导数各有固定写法。',
+      tip: '<b>注意：</b>n 阶导数 <code>f^{(n)}(x)</code> 的圆括号要放进花括号里。想让 d 保持正体，写 <code>\\mathrm{d}</code>。',
+      groups: [{ rows: String.raw`
+导数记号 ::: f'(x),\quad f''(x),\quad f^{(n)}(x)
+莱布尼茨记号 ::: \frac{dy}{dx},\quad \frac{d^{2}y}{dx^{2}}
+导数定义 ::: f'(x_0)=\lim_{\Delta x\to 0}\frac{f(x_0+\Delta x)-f(x_0)}{\Delta x}
+微分 ::: \mathrm{d}y=f'(x)\,\mathrm{d}x
+链式法则 ::: \frac{dy}{dx}=\frac{dy}{du}\cdot\frac{du}{dx}
+偏导数 ::: \frac{\partial z}{\partial x},\quad \frac{\partial^{2} z}{\partial x\,\partial y}
+全微分 ::: dz=\frac{\partial z}{\partial x}dx+\frac{\partial z}{\partial y}dy
+梯度 ::: \nabla f=\left(\frac{\partial f}{\partial x},\frac{\partial f}{\partial y}\right)
+拉格朗日中值 ::: f(b)-f(a)=f'(\xi)(b-a)
+洛必达法则 ::: \lim\frac{f(x)}{g(x)}=\lim\frac{f'(x)}{g'(x)}
+` }]
+    },
+    {
+      id: 'integral', name: '积分',
+      intro: '积分号 <code>\\int</code> 后面跟被积函数，最后写 dx。多重积分和曲线积分只是换了积分号。',
+      tip: '<b>注意：</b>dx 前面加 <code>\\,</code> 留一点空隙，读起来更舒服。上下限用 <code>_</code> 和 <code>^</code>，和求和一样。',
+      groups: [{ rows: String.raw`
+不定积分 ::: \int f(x)\,dx=F(x)+C
+定积分 ::: \int_{a}^{b}f(x)\,dx
+牛顿-莱布尼茨 ::: \int_{a}^{b}f(x)\,dx=F(x)\Big|_{a}^{b}=F(b)-F(a)
+反常积分 ::: \int_{0}^{+\infty}e^{-x}\,dx=1
+高斯积分 ::: \int_{-\infty}^{+\infty}e^{-x^{2}}\,dx=\sqrt{\pi}
+分部积分 ::: \int u\,dv=uv-\int v\,du
+换元积分 ::: \int f(\varphi(t))\varphi'(t)\,dt
+二重积分 ::: \iint_{D}f(x,y)\,d\sigma
+三重积分 ::: \iiint_{\Omega}f(x,y,z)\,dV
+曲线积分 ::: \int_{L}P\,dx+Q\,dy
+闭曲线积分 ::: \oint_{L}P\,dx+Q\,dy
+格林公式 ::: \oint_{L}P\,dx+Q\,dy=\iint_{D}\left(\frac{\partial Q}{\partial x}-\frac{\partial P}{\partial y}\right)dx\,dy
+` }]
+    },
+    {
+      id: 'series', name: '级数',
+      intro: '求和 <code>\\sum</code> 和连乘 <code>\\prod</code> 的上下限写法和积分一致。',
+      tip: '<b>注意：</b>交错项的 <code>(-1)^{n}</code> 要带括号。<code>\\cdots</code> 是居中的省略号，<code>\\ldots</code> 是贴着底线的。',
+      groups: [{ rows: String.raw`
+求和 ::: \sum_{n=1}^{\infty}a_n
+连乘 ::: \prod_{i=1}^{n}x_i
+等比级数 ::: \sum_{n=0}^{\infty}q^{n}=\frac{1}{1-q},\quad |q|<1
+p 级数 ::: \sum_{n=1}^{\infty}\frac{1}{n^{p}}
+比值判别法 ::: \lim_{n\to\infty}\left|\frac{a_{n+1}}{a_n}\right|=\rho
+幂级数 ::: \sum_{n=0}^{\infty}a_n(x-x_0)^{n}
+收敛半径 ::: R=\lim_{n\to\infty}\left|\frac{a_n}{a_{n+1}}\right|
+泰勒公式 ::: f(x)=\sum_{n=0}^{\infty}\frac{f^{(n)}(x_0)}{n!}(x-x_0)^{n}
+e^x 展开 ::: e^{x}=1+x+\frac{x^{2}}{2!}+\cdots+\frac{x^{n}}{n!}+\cdots
+sin x 展开 ::: \sin x=\sum_{n=0}^{\infty}\frac{(-1)^{n}x^{2n+1}}{(2n+1)!}
+` }]
+    },
+    {
+      id: 'funcs', name: '常用函数',
+      intro: '标准函数都有现成的命令，显示为正体并自动留出间距。',
+      tip: '<b>注意：</b>函数名一定要带反斜杠。<code>\\sin x</code> 是正体的 sin x；直接写 <code>sin x</code> 会被当成 s、i、n 三个变量相乘，变成斜体。',
+      groups: [{ rows: String.raw`
+三角函数 ::: \sin x,\ \cos x,\ \tan x,\ \cot x,\ \sec x,\ \csc x
+反三角函数 ::: \arcsin x,\ \arccos x,\ \arctan x
+对数与指数 ::: \ln x,\quad \log_{a}x,\quad e^{x},\quad \exp(x)
+双曲函数 ::: \sinh x,\quad \cosh x,\quad \tanh x
+最值与界 ::: \max_{x\in[a,b]}f(x),\quad \min f,\quad \sup A,\quad \inf A
+取整 ::: \lfloor x\rfloor,\quad \lceil x\rceil
+绝对值与范数 ::: |x|,\quad \|x\|
+阶乘与组合数 ::: n!,\quad \binom{n}{k}=\frac{n!}{k!(n-k)!}
+符号函数 ::: \operatorname{sgn}x
+` }]
+    },
+    {
+      id: 'matrix', name: '矩阵与分段',
+      intro: '这些结构都用 <code>\\begin{...}</code> 和 <code>\\end{...}</code> 包起来，里面用 <code>&amp;</code> 分列、用 <code>\\\\</code> 换行。',
+      tip: '<b>注意：</b>在 aligned 里，把 <code>&amp;</code> 放在要对齐的符号（通常是 =）前面。分段函数里第一个 <code>&amp;</code> 后面写条件。',
+      groups: [{ rows: String.raw`
+分段函数 ::: f(x)=\begin{cases}x^{2}, & x\geq 0\\ -x, & x<0\end{cases}
+圆括号矩阵 ::: A=\begin{pmatrix}a & b\\ c & d\end{pmatrix}
+方括号矩阵 ::: \begin{bmatrix}1&0\\0&1\end{bmatrix}
+行列式 ::: \begin{vmatrix}a & b\\ c & d\end{vmatrix}=ad-bc
+方程组 ::: \begin{cases}x+y=1\\ x-y=0\end{cases}
+多行对齐 ::: \begin{aligned}(a+b)^{2}&=a^{2}+2ab+b^{2}\\ &\geq 4ab\end{aligned}
+` }]
+    },
+    {
+      id: 'vector', name: '向量与集合',
+      intro: '向量、场论和集合逻辑的符号，空间解析几何和多元微积分都会用到。',
+      tip: '<b>注意：</b>数集用 <code>\\mathbb{R}</code>，需要 AMS 符号包的环境才能识别。<code>\\subset</code> 与 <code>\\subseteq</code> 在不同教材里含义不完全一样，写之前先看自己教材的约定。',
+      groups: [{ rows: String.raw`
+向量 ::: \vec{a},\quad \mathbf{a},\quad \overrightarrow{AB}
+点乘与叉乘 ::: \vec{a}\cdot\vec{b}=|\vec{a}||\vec{b}|\cos\theta,\quad \vec{a}\times\vec{b}
+散度与旋度 ::: \nabla\cdot\vec{F},\quad \nabla\times\vec{F}
+通量 ::: \iint_{\Sigma}\vec{F}\cdot d\vec{S}
+集合关系 ::: x\in A,\quad x\notin A,\quad A\subset B,\quad A\subseteq B
+集合运算 ::: A\cup B,\quad A\cap B,\quad A\setminus B,\quad \varnothing
+数集 ::: \mathbb{N},\ \mathbb{Z},\ \mathbb{Q},\ \mathbb{R},\ \mathbb{C}
+量词 ::: \forall x\in\mathbb{R},\ \exists y>0
+推出与等价 ::: P\Rightarrow Q,\quad P\Leftrightarrow Q
+区间 ::: (a,b),\ [a,b],\ [a,b),\ (-\infty,+\infty)
+` }]
+    },
+    {
+      id: 'practice', name: '练习', kind: 'practice',
+      intro: '看着上面的公式，把代码写出来。预览会实时显示你写的结果，写得和目标一致就算对，不同的写法（比如 <code>x^2</code> 和 <code>x^{2}</code>）也可以。'
+    }
+  ];
+
+  var EX = [
+    { a: [String.raw`x^{2}+y^{2}=r^{2}`, String.raw`x^2+y^2=r^2`], h: '上标用 ^。只有一个字符时花括号可以省略。' },
+    { a: [String.raw`\frac{a+b}{2}`], h: '\\frac{分子}{分母}，分子是 a+b。' },
+    { a: [String.raw`\sqrt[3]{x^{2}+1}`, String.raw`\sqrt[3]{x^2+1}`], h: '\\sqrt[n]{...}，方括号里写根指数。' },
+    { a: [String.raw`\lim_{x\to 0}\frac{\sin x}{x}=1`, String.raw`\lim_{x\to0}\frac{\sin x}{x}=1`], h: '下标用 _{x\\to 0}，sin 要带反斜杠。' },
+    { a: [String.raw`f'(x)=\lim_{h\to 0}\frac{f(x+h)-f(x)}{h}`], h: '撇号直接写在 f 后面。分式的分子是 f(x+h)-f(x)。' },
+    { a: [String.raw`\int_0^1 x^2\,dx=\frac{1}{3}`, String.raw`\int_{0}^{1}x^{2}\,dx=\frac{1}{3}`, String.raw`\int_0^1 x^2\,dx=\frac13`], h: '上下限用 _ 和 ^，dx 前面加 \\, 留空隙。' },
+    { a: [String.raw`\sum_{n=1}^{\infty}\frac{1}{n^2}=\frac{\pi^2}{6}`, String.raw`\sum_{n=1}^{\infty}\frac{1}{n^{2}}=\frac{\pi^{2}}{6}`], h: '无穷是 \\infty，圆周率是 \\pi。' },
+    { a: [String.raw`\frac{\partial^{2} z}{\partial x\,\partial y}`, String.raw`\frac{\partial^2 z}{\partial x\partial y}`, String.raw`\frac{\partial^2 z}{\partial x \partial y}`], h: '偏导符号是 \\partial，分子上标 2 写在 \\partial 后面。' },
+    { a: [String.raw`\oint_{L}P\,dx+Q\,dy`, String.raw`\oint_L P\,dx+Q\,dy`], h: '闭曲线积分号是 \\oint。' },
+    { a: [String.raw`f(x)=\begin{cases}x^{2}, & x\geq 0\\ -x, & x<0\end{cases}`, String.raw`f(x)=\begin{cases}x^2,&x\ge 0\\-x,&x<0\end{cases}`], h: '用 cases 环境，& 分隔表达式和条件，\\\\ 换行。' }
+  ];
+  EX[0].t = String.raw`x^{2}+y^{2}=r^{2}`;
+  EX[1].t = String.raw`\frac{a+b}{2}`;
+  EX[2].t = String.raw`\sqrt[3]{x^{2}+1}`;
+  EX[3].t = String.raw`\lim_{x\to 0}\frac{\sin x}{x}=1`;
+  EX[4].t = String.raw`f'(x)=\lim_{h\to 0}\frac{f(x+h)-f(x)}{h}`;
+  EX[5].t = String.raw`\int_0^1 x^2\,dx=\frac{1}{3}`;
+  EX[6].t = String.raw`\sum_{n=1}^{\infty}\frac{1}{n^2}=\frac{\pi^2}{6}`;
+  EX[7].t = String.raw`\frac{\partial^{2} z}{\partial x\,\partial y}`;
+  EX[8].t = String.raw`\oint_{L}P\,dx+Q\,dy`;
+  EX[9].t = String.raw`f(x)=\begin{cases}x^{2}, & x\geq 0\\ -x, & x<0\end{cases}`;
+
+  /* ---------- builders ---------- */
+  function buildRow(label, tex) {
+    var r = el('div', 'row');
+    r.appendChild(el('div', 'lbl', label));
+    var out = el('div', 'out');
+    r.appendChild(out);
+    typeset(out, tex, true);
+    var src = el('div', 'src');
+    src.appendChild(el('code', 'tex', tex));
+    var acts = el('div', 'acts');
+    var b1 = el('button', 'btn', '复制'); b1.type = 'button';
+    b1.addEventListener('click', function () { copyText(tex, b1); });
+    var b2 = el('button', 'btn pri', '试一试'); b2.type = 'button';
+    b2.addEventListener('click', function () {
+      ed.value = tex; renderEditor();
+      $('#editor').scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+    });
+    acts.appendChild(b1); acts.appendChild(b2);
+    src.appendChild(acts);
+    r.appendChild(src);
+    return r;
+  }
+  function buildTile(name) {
+    var tex = '\\' + name;
+    var b = el('button', 'tile');
+    b.type = 'button';
+    b.setAttribute('aria-label', '插入 ' + tex);
+    var o = el('span', 'tout');
+    typeset(o, tex, false);
+    b.appendChild(o);
+    b.appendChild(el('span', 'tcode', tex));
+    b.addEventListener('click', function () { insertSnippet(tex + ' ', false); toast('已插入 ' + tex); });
+    return b;
+  }
+
+  var solved = {};
+  try { solved = JSON.parse(localStorage.getItem('lx-solved') || '{}') || {}; } catch (e) { solved = {}; }
+  function saveSolved() { try { localStorage.setItem('lx-solved', JSON.stringify(solved)); } catch (e) {} }
+
+  function cleanInput(s) { return s.trim().replace(/^\$+|\$+$/g, ''); }
+  function norm(s) { return cleanInput(s).replace(/\\[,;!:]/g, '').replace(/\s+/g, ''); }
+  function mmlKey(t) {
+    try {
+      return window.MathJax.tex2mml(cleanInput(t)).replace(/\sdata-latex(-item)?="[^"]*"/g, '').replace(/\s+/g, ' ');
+    } catch (e) { return null; }
+  }
+  function isRight(user, ex) {
+    var u = norm(user);
+    if (!u) return false;
+    if (ex.a.some(function (a) { return norm(a) === u; })) return true;
+    if (mjReady && typeof window.MathJax.tex2mml === 'function') {
+      var k = mmlKey(user), k2 = mmlKey(ex.t);
+      return !!k && k === k2;
+    }
+    return false;
+  }
+
+  function buildPractice(root) {
+    var score = el('p', 'score');
+    function updateScore() {
+      var n = Object.keys(solved).filter(function (k) { return solved[k]; }).length;
+      score.textContent = '';
+      score.appendChild(document.createTextNode('已完成 '));
+      score.appendChild(el('b', null, String(n)));
+      score.appendChild(document.createTextNode(' / ' + EX.length));
+    }
+    updateScore();
+    root.appendChild(score);
+    var list = el('div', 'rows');
+    EX.forEach(function (ex, i) {
+      var box = el('div', 'ex' + (solved[i] ? ' done' : ''));
+      box.appendChild(el('h3', null, '第 ' + (i + 1) + ' 题'));
+      var tg = el('div', 'target'); box.appendChild(tg); typeset(tg, ex.t, true);
+      var inp = el('input'); inp.type = 'text'; inp.id = 'ex-' + i;
+      inp.placeholder = '在这里写代码'; inp.spellcheck = false; inp.autocomplete = 'off'; inp.autocapitalize = 'off';
+      inp.setAttribute('aria-label', '第 ' + (i + 1) + ' 题的答案');
+      box.appendChild(inp);
+      var mine = el('div', 'mine empty', '你写的公式会显示在这里');
+      box.appendChild(mine);
+      var bar = el('div', 'ex-bar');
+      var chk = el('button', 'btn pri', '检查'); chk.type = 'button';
+      var hint = el('button', 'btn', '提示'); hint.type = 'button';
+      var ans = el('button', 'btn', '看答案'); ans.type = 'button';
+      bar.appendChild(chk); bar.appendChild(hint); bar.appendChild(ans);
+      box.appendChild(bar);
+      var fb = el('p', 'feedback'); fb.setAttribute('role', 'status');
+      box.appendChild(fb);
+
+      var t;
+      function live() {
+        var v = cleanInput(inp.value);
+        if (!v) { mine.textContent = '你写的公式会显示在这里'; mine.classList.add('empty'); return; }
+        mine.classList.remove('empty');
+        typeset(mine, v, true);
+      }
+      inp.addEventListener('input', function () { clearTimeout(t); t = setTimeout(live, 90); fb.textContent = ''; fb.className = 'feedback'; });
+      function check() {
+        if (!cleanInput(inp.value)) { fb.className = 'feedback info'; fb.textContent = '先写点代码再检查。'; return; }
+        if (isRight(inp.value, ex)) {
+          fb.className = 'feedback ok'; fb.textContent = '正确。';
+          if (!solved[i]) { solved[i] = true; saveSolved(); box.classList.add('done'); updateScore(); }
+        } else {
+          fb.className = 'feedback bad'; fb.textContent = '和目标还不一样，对照预览检查符号、花括号和上下标。';
+        }
+      }
+      chk.addEventListener('click', check);
+      inp.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); check(); } });
+      hint.addEventListener('click', function () { fb.className = 'feedback info'; fb.textContent = '提示：' + ex.h; });
+      ans.addEventListener('click', function () {
+        fb.className = 'feedback info'; fb.textContent = '参考答案：';
+        fb.appendChild(el('code', null, ex.a[0]));
+      });
+      list.appendChild(box);
+    });
+    root.appendChild(list);
+  }
+
+  /* ---------- tabs & panel ---------- */
+  var cur = null;
+  var tabs = $('#tabs'), panel = $('#panel');
+  CH.forEach(function (c) {
+    var b = el('button', null, c.name);
+    b.type = 'button'; b.dataset.id = c.id;
+    b.addEventListener('click', function () {
+      show(c.id);
+      try { if (location.hash !== '#' + c.id) location.hash = c.id; } catch (e) {}
+      tabs.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+    });
+    tabs.appendChild(b);
+  });
+
+  function show(id) {
+    var c = CH.filter(function (x) { return x.id === id; })[0] || CH[0];
+    if (cur === c.id) return;
+    cur = c.id;
+    Array.prototype.forEach.call(tabs.children, function (b) {
+      if (b.dataset.id === c.id) { b.setAttribute('aria-current', 'page'); b.scrollIntoView({ block: 'nearest', inline: 'center' }); }
+      else { b.removeAttribute('aria-current'); }
+    });
+    queue.length = 0;
+    panel.textContent = '';
+    panel.appendChild(el('h2', null, c.name));
+    var intro = el('p', 'intro'); intro.innerHTML = c.intro; panel.appendChild(intro);
+    if (c.tip) { var tip = el('p', 'tip'); tip.innerHTML = c.tip; panel.appendChild(tip); }
+    if (c.kind === 'practice') { buildPractice(panel); return; }
+    c.groups.forEach(function (g) {
+      if (g.t) panel.appendChild(el('h3', null, g.t));
+      if (g.tiles) {
+        var grid = el('div', 'tiles');
+        g.tiles.split(/\s+/).forEach(function (n) { grid.appendChild(buildTile(n)); });
+        panel.appendChild(grid);
+      } else {
+        var rows = el('div', 'rows');
+        parseRows(g.rows).forEach(function (r) { rows.appendChild(buildRow(r[0], r[1])); });
+        panel.appendChild(rows);
+      }
+    });
+  }
+  window.addEventListener('hashchange', function () { show(location.hash.slice(1)); });
+
+  /* ---------- start ---------- */
+  typeset($('#hero'), String.raw`\int_{0}^{+\infty}e^{-x^{2}}\,dx=\frac{\sqrt{\pi}}{2}`, true);
+  renderEditor();
+  show(location.hash.slice(1));
+  if (window.__mjReady) window.initTutorial();
+})();
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-svg.min.js" async></script>
+
+</body></html>

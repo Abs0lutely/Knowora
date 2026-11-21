@@ -1,0 +1,6 @@
+dist/
+__pycache__/
+*.py[cod]
+
+# Keep the supplied planning document out of the public repository.
+GitHub Pages 知识点网站实施方案.md

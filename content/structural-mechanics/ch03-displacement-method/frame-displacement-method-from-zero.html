@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<script type="application/json" id="doc-meta">
+{
+  "title": "刚架的位移法：从零讲起",
+  "course": "structural-mechanics",
+  "chapter": "ch03-displacement-method",
+  "tags": [
+    "位移法",
+    "刚架",
+    "内力图"
+  ],
+  "prerequisites": [],
+  "related": [
+    "structural-mechanics/portal-frame-uniform-load",
+    "structural-mechanics/displacement-method-exercises"
+  ],
+  "source": "待补充",
+  "review": {
+    "status": "unreviewed",
+    "by": "",
+    "date": ""
+  },
+  "created": "2026-11-21"
+}
+</script>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>刚架的位移法 · 从零讲起</title>
+<style>
+:root{--ab:#2f6fdb;--bc:#1f9d55;--bd:#e07b00;--red:#d6336c;--ink:#1f2430;--mute:#667085;--bg:#f5f7fb}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.75 -apple-system,"PingFang SC","Microsoft YaHei",sans-serif}
+header{background:linear-gradient(135deg,#243b6b,#3b6fd8);color:#fff;padding:28px 18px}
+header h1{margin:0 0 6px;font-size:26px}
+header p{margin:0;opacity:.92}
+main{max-width:920px;margin:0 auto;padding:12px 14px 60px}
+nav{background:#fff;border-radius:14px;padding:12px 16px;margin:18px 0;box-shadow:0 2px 10px rgba(30,40,80,.07);font-size:15px}
+nav a{color:#2f5fc4;text-decoration:none;margin-right:12px;white-space:nowrap;display:inline-block}
+section{background:#fff;border-radius:14px;padding:18px 18px 22px;margin:18px 0;box-shadow:0 2px 10px rgba(30,40,80,.07)}
+h2{margin:0 0 10px;font-size:22px;border-left:6px solid #3b6fd8;padding-left:10px}
+h3{margin:18px 0 6px;font-size:18px}
+p{margin:8px 0}
+.tip,.warn,.eq{border-radius:10px;padding:10px 14px;margin:12px 0;font-size:15px}
+.tip{background:#eaf3ff;border-left:5px solid #3b6fd8}
+.warn{background:#fff4e5;border-left:5px solid #f08c00}
+.ok{background:#e9f8ef;border-left:5px solid #1f9d55;border-radius:10px;padding:10px 14px;margin:12px 0;font-size:15px}
+.eq{background:#f1f3f9;font-family:Consolas,"Courier New",monospace;overflow-x:auto;white-space:pre-wrap;line-height:1.9}
+svg{width:100%;height:auto;display:block;background:#fcfdff;border:1px solid #e1e6f0;border-radius:10px}
+.row{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-start}
+.row>*{flex:1 1 300px;min-width:0}
+button{background:#3b6fd8;color:#fff;border:0;border-radius:8px;padding:8px 14px;font-size:15px;cursor:pointer;margin:4px 6px 4px 0}
+button.alt{background:#e9edf7;color:#243b6b}
+button:active{transform:scale(.97)}
+input[type=range]{width:100%}
+table{border-collapse:collapse;width:100%;font-size:14.5px;margin:8px 0}
+th,td{border:1px solid #d8deea;padding:6px 8px;text-align:center}
+th{background:#eef2fb}
+.ctl{margin:8px 0}
+.val{font-weight:700;color:var(--red)}
+.ab{color:var(--ab);font-weight:700}.bc{color:var(--bc);font-weight:700}.bd{color:var(--bd);font-weight:700}
+details{margin:8px 0;background:#f7f8fc;border-radius:8px;padding:6px 12px}
+summary{cursor:pointer;font-weight:700;color:#243b6b}
+.pulse{animation:pulse .9s ease-in-out 3}
+@keyframes pulse{50%{opacity:.2}}
+.small{font-size:13.5px;color:var(--mute)}
+</style>
+</head>
+<body>
+<header>
+<h1>刚架内力图 · 位移法从零讲起</h1>
+<p>写给高中生的图解教程：先看懂结构，再一步步算；中间穿插力法、位移法、图乘法的动画。</p>
+</header>
+<main>
+
+<nav>
+<b>目录：</b>
+<a href="#s0">0 题目图</a><a href="#s1">1 刚节点</a><a href="#s2">2 M 与 Q</a><a href="#s3">3 三种方法</a>
+<a href="#s4">4 锁住节点</a><a href="#s5">5 转动刚度</a><a href="#s6">6 放开节点</a><a href="#s7">7 M 图</a><a href="#s8">8 Q 图</a><a href="#s9">9 力法与图乘法</a><a href="#s10">10 总结</a>
+</nav>
+
+<!-- ================= 0 ================= -->
+<section id="s0">
+<h2>0　先把题目"画"出来</h2>
+<p>先别急着算。第一步永远是：<b>看懂这是个什么结构，哪里被固定了，哪里受力了。</b>点下面的按钮，逐个认识图里的"零件"。</p>
+<div class="warn"><b>先说明：</b>我这边看不到你的原图，下图是按题目文字重新画的。题目里"D 端导向支座"没说清方向，我按最常见的理解画：D 端<b>不能转、不能上下动，但能水平滑动</b>；C 端是<b>固定铰支座</b>（不能水平、竖向移动，可以转）。C 改成固定铰后只是多了一个水平约束，而 A 固定、杆不伸缩，本来 B 点就不能水平动，所以<b>计算过程和 M、Q 图都不变</b>，只是超静定次数从 3 次变成 4 次。另外按教材惯例，<b>忽略杆件的拉伸/压缩变形</b>（杆再受压也不会变短）。如果你的原图 D 端约束不同（比如只能上下滑），请告诉我，那样 B 点还会多出一个竖向位移未知数，要重算。</div>
+<svg id="fig0" viewBox="0 0 640 390"></svg>
+<div id="legendBtns"></div>
+<div class="tip" id="legendText">点一个按钮试试 👆</div>
+<p>三根杆的抗弯刚度都是 EI（EI 可以理解为"杆有多难弯"，数值越大越硬）。为了方便，颜色统一：<span class="ab">AB 蓝</span>、<span class="bc">BC 绿</span>、<span class="bd">BD 橙</span>。</p>
+</section>
+
+<!-- ================= 1 ================= -->
+<section id="s1">
+<h2>1　刚节点：为什么 B 点只有"一个"未知数</h2>
+<p>"刚架"的"刚"，说的就是<b>刚节点</b>：杆和杆在节点处像<b>焊死</b>了一样，节点转多少，连在它上面的杆端就都转多少，杆与杆之间的夹角<b>永远不变</b>。对比"铰节点"（像合页，各杆可以各转各的）。拖动滑块试试：</p>
+<div class="ctl"><button id="b1r">刚接（本题 B 点）</button><button id="b1h" class="alt">铰接（对比）</button></div>
+<svg id="fig1" viewBox="0 0 640 290"></svg>
+<div class="ctl">B 点转角（为了看清楚，画得很夸张）：<span class="val" id="v1">0°</span><input type="range" id="th1" min="-30" max="30" value="0"></div>
+<div class="tip" id="info1"></div>
+<div class="tip"><b>这和本题有什么关系？</b><br>
+① A 是固定端，AB 杆又"不会伸缩"，所以 B 点<b>不能左右动</b>；<br>
+② BD 杆不会伸缩，D 端又不能上下动，所以 B 点<b>不能上下动</b>；<br>
+③ B 是刚节点，所以三根杆在 B 端<b>转得一样多</b>，记作 θ<sub>B</sub>。<br>
+所以整道题的<b>未知数只有一个：θ<sub>B</sub></b>。这就是用"位移法"的底气。</div>
+</section>
+
+<!-- ================= 2 ================= -->
+<section id="s2">
+<h2>2　弯矩 M 与剪力 Q：材料内部在"喊疼"的两种方式</h2>
+<p><b>弯矩 M</b>：拿一把塑料尺，两端架起来，中间用手指往下压。尺子弯了——<span style="color:#d6336c;font-weight:700">下侧被拉长</span>，<span style="color:#2f6fdb;font-weight:700">上侧被压短</span>。弯得越厉害，M 越大。<b>M 图画在"被拉长的那一侧"（受拉侧）</b>。</p>
+<p><b>剪力 Q</b>：像剪刀的两片刃，要把相邻两截材料沿截面"错开"的力。</p>
+<p>拖动滑块，增大中间的力 P，看看尺子、M 图、Q 图怎么变（这是一根简支梁，跨度 4 m）：</p>
+<svg id="fig2" viewBox="0 0 640 380"></svg>
+<div class="ctl">力 P = <span class="val" id="v2">50</span> kN<input type="range" id="p2" min="10" max="100" value="50" step="5"></div>
+<div class="tip" id="info2"></div>
+<div class="tip"><b>三条规律（后面画图全靠它们）</b><br>
+• 只有集中力的地方：M 图是<b>折线</b>（有尖角），Q 图<b>突然跳一下</b>。<br>
+• 有均布荷载的地方：Q 图是<b>斜直线</b>，M 图是<b>抛物线</b>。<br>
+• <b>Q 就是 M 图的"斜率"</b>：M 图往上爬，Q 为正；M 图到顶点，Q = 0。</div>
+</section>
+
+<!-- ================= 3 ================= -->
+<section id="s3">
+<h2>3　超静定、力法、位移法：三个名词一次讲清</h2>
+<h3>3.1 什么是"超静定"？</h3>
+<p>先数一数支座要"出多少力"：A 固定端 3 个（水平力、竖直力、力矩）、C 固定铰支座 2 个（水平力、竖直力）、D 导向支座 2 个（竖直力、力矩）。共 <b>7 个未知力</b>。而平面里能用的平衡方程只有 <b>3 个</b>（ΣX=0，ΣY=0，ΣM=0）。</p>
+<div class="eq">未知数 7 个 − 方程 3 个 = 4 次超静定
+就像"3 个方程解 7 个未知数"——不够用！必须再借助<b>变形条件</b>补方程。</div>
+<h3>3.2 补方程的两条路</h3>
+<table>
+<tr><th></th><th>力法</th><th>位移法</th></tr>
+<tr><td>选谁当未知数</td><td>"多余的力"X（本题要 4 个）</td><td>节点的位移（本题只要 θ<sub>B</sub> 1 个）</td></tr>
+<tr><td>生活比喻</td><td>把多余的支座拆掉，看结构塌下去多少，再用一个力把它顶回原位</td><td>先把节点"锁死"，算出每根杆的标准受力；再松开，看节点转多少才不再需要锁</td></tr>
+<tr><td>列的方程</td><td>变形协调：δX + Δ = 0</td><td>节点力矩平衡：ΣM = 0</td></tr>
+<tr><td>要算位移吗</td><td>要 → <b>图乘法</b>就是它的"计算器"</td><td>不用，直接套公式表</td></tr>
+</table>
+<div class="ok"><b>本题选位移法：</b>位移法 1 个未知数、1 个方程；力法要 4 个未知数、4 个联立方程，工作量大得多。选对方法，题目就简单一大半。<br>不过别急，§9 会用"力法 + 图乘法"算一小段，让你亲眼看到这两个概念怎么用，并且它还会帮我们验证位移法里用到的一个数字。</div>
+</section>
+
+<!-- ================= 4 ================= -->
+<section id="s4">
+<h2>4　位移法第 ① 步：把 B 点"锁死"，查标准件</h2>
+<p>想象在 B 点装一个只阻止转动的"刚臂"（§6 里会看到一把小锁🔒）。B 点转不动了，三根杆就各自变成教材里常见的<b>标准梁</b>，它们的杆端弯矩可以直接查表，这叫<b>固端弯矩</b>。</p>
+<table>
+<tr><th>杆</th><th>标准件（锁住 B 之后）</th><th>公式</th><th>结果 (kN·m)</th></tr>
+<tr><td class="ab">AB</td><td>两端固定，满跨均布 q=15</td><td>M<sub>AB</sub><sup>F</sup> = −ql²/12<br>M<sub>BA</sub><sup>F</sup> = +ql²/12</td><td>−20<br>+20</td></tr>
+<tr><td class="bc">BC</td><td>B 端固定、C 端铰（固定铰），跨中集中力 P=48</td><td>M<sub>BC</sub><sup>F</sup> = −3Pl/16<br>M<sub>CB</sub><sup>F</sup> = 0</td><td>−36<br>0</td></tr>
+<tr><td class="bd">BD</td><td>没有荷载</td><td>—</td><td>0</td></tr>
+</table>
+<div class="tip"><b>符号约定：</b>杆端弯矩以<b>顺时针为正</b>（想象你站在杆外，看杆端被"拧"的方向）。<br>
+<b>结果：</b>锁住 B 点时，B 端三根杆的弯矩加起来 = (+20) + (−36) + 0 = <span class="val">−16</span>，不为零，这 16 就得靠那把"锁"来扛。</div>
+<details><summary>为什么 M<sub>AB</sub><sup>F</sup> 是负的？</summary>
+<p>AB 在 A 端是"左端"。梁被向下的均布荷载压弯后，固定端的墙要把梁的左端"往上掰"，也就是对杆端施加<b>逆时针</b>的力矩，所以是负。右端 B 则相反，为正。</p></details>
+<details><summary>−36（3Pl/16）是哪来的？</summary>
+<p>这是"一端固定、一端铰"的梁在跨中受力的结果。别急，§9 我们会用<b>力法 + 图乘法</b>亲手推一遍。</p></details>
+</section>
+
+<!-- ================= 5 ================= -->
+<section id="s5">
+<h2>5　位移法第 ② 步：转动刚度——"把杆端扭一个角，要用多大力"</h2>
+<p>线刚度 <b>i = EI / l</b>。本题 l = 4 m，所以 <b>i = EI/4</b>。把杆的一端（近端）扭转 θ，需要的力矩与<b>远端怎么被约束</b>有关。点按钮看看：</p>
+<div class="ctl"><button id="b5f">远端固定</button><button id="b5p" class="alt">远端铰</button><button id="b5g" class="alt">远端导向</button></div>
+<svg id="fig5" viewBox="0 0 640 330"></svg>
+<div class="ctl">近端转角 θ = <span class="val" id="v5">0.15</span> rad（画得夸张）<input type="range" id="th5" min="0" max="30" value="15"></div>
+<div class="tip" id="info5"></div>
+<table>
+<tr><th>远端约束</th><th>近端弯矩</th><th>远端弯矩</th><th>本题中谁属于这种</th></tr>
+<tr><td>固定</td><td>4iθ</td><td>2iθ</td><td class="ab">AB 杆（A 端固定）</td></tr>
+<tr><td>铰</td><td>3iθ</td><td>0</td><td class="bc">BC 杆（C 端固定铰）</td></tr>
+<tr><td>导向（只能侧移）</td><td>iθ</td><td>−iθ</td><td class="bd">BD 杆（D 端导向）</td></tr>
+</table>
+<p>把"锁住时的固端弯矩"和"转动 θ 产生的弯矩"<b>相加</b>，就得到每个杆端的真实弯矩（<b>转角位移方程</b>）：</p>
+<div class="eq">M_AB = 2iθ − 20        M_BA = 4iθ + 20
+M_BC = 3iθ − 36
+M_BD = iθ              M_DB = −iθ</div>
+</section>
+
+<!-- ================= 6 ================= -->
+<section id="s6">
+<h2>6　位移法第 ③ 步：放开 B 点，让它自己转到"不用再锁"</h2>
+<p>这是整个位移法最核心的画面。拖动滑块（或点"放开"），把 B 点从"锁死"慢慢放开：B 点转起来，三根杆跟着变形，锁需要扛的力矩越来越小，<b>当锁的力矩恰好为 0 时，就是真实状态</b>。</p>
+<div class="ctl"><button id="b6play">▶ 放开 B 点</button><button id="b6reset" class="alt">↺ 重新锁住</button></div>
+<div class="row">
+<svg id="fig6" viewBox="0 0 640 390"></svg>
+<div>
+<svg id="fig6b" viewBox="0 0 320 230"></svg>
+<div class="small">右图：B 点三根杆的弯矩之和 ΣM<sub>B</sub> 随 iθ 变化的直线。它穿过 0 的地方就是答案。</div>
+</div>
+</div>
+<div class="ctl">放开程度：<span class="val" id="v6">0%</span><input type="range" id="t6" min="0" max="100" value="0"></div>
+<div class="tip" id="info6"></div>
+<table id="tbl6"></table>
+<h3>B 点力矩平衡</h3>
+<p>把 B 点单独"抠"出来，三根杆对它的力矩加起来必须等于 0：</p>
+<div class="eq">M_BA + M_BC + M_BD = 0
+(4iθ + 20) + (3iθ − 36) + (iθ) = 0
+8iθ − 16 = 0
+<b>iθ = 2</b>　　（所以 θ_B = 2 / i = 2 × 4 / EI = 8 / EI，顺时针）</div>
+<div class="ok">一个未知数、一个方程，位移法的核心就这么简单。这个"2"代回去，所有杆端弯矩就出来了。</div>
+</section>
+
+<!-- ================= 7 ================= -->
+<section id="s7">
+<h2>7　位移法第 ④ 步：代回去，画 M 图</h2>
+<table>
+<tr><th>杆端</th><th>算式（iθ = 2）</th><th>结果 kN·m</th><th>受拉侧</th></tr>
+<tr><td>M<sub>AB</sub></td><td>2×2 − 20</td><td>−16</td><td>上侧</td></tr>
+<tr><td>M<sub>BA</sub></td><td>4×2 + 20</td><td>+28</td><td>上侧</td></tr>
+<tr><td>M<sub>BC</sub></td><td>3×2 − 36</td><td>−30</td><td>上侧</td></tr>
+<tr><td>M<sub>BD</sub></td><td>2</td><td>+2</td><td>左侧</td></tr>
+<tr><td>M<sub>DB</sub></td><td>−2</td><td>−2</td><td>左侧</td></tr>
+</table>
+<div class="tip"><b>判断受拉侧的口诀：</b>水平杆，<b>左端逆时针（负）或右端顺时针（正）→ 上侧受拉</b>。AB：A 端−16、B 端+28 → 上侧；BC：B 端−30 → 上侧；柱 BD：上端顺时针 → 左侧受拉。<br>
+<b>检查：</b>B 点 28 − 30 + 2 = 0 ✓</div>
+<p>点"播放"看 M 图一段一段画出来（画在受拉侧）：</p>
+<button id="mPlay">▶ 播放 / 重播</button>
+<svg id="figM" viewBox="0 0 640 390"></svg>
+<div class="tip">• <span class="ab">AB</span>：均布荷载 → 抛物线。两端都上侧受拉（16、28），中间 x = 1.8 m 处反过来下侧受拉，最大约 8.3。<br>
+• <span class="bc">BC</span>：只有集中力 → 两段直线。B 端 30（上拉），P 作用点 33（下拉），C 端 0（铰支座处没有弯矩）。<br>
+• <span class="bd">BD</span>：常数 2（左侧受拉），因为 B 点 30 − 28 的差额，要靠柱子来补。</div>
+</section>
+
+<!-- ================= 8 ================= -->
+<section id="s8">
+<h2>8　位移法第 ⑤ 步：画 Q 图，并检验</h2>
+<p>有了 M 图，Q 图可以用"<b>Q = M 图的斜率</b>"来算。</p>
+<h3>BC 杆（无分布荷载 → 每段 Q 是常数）</h3>
+<div class="eq">B → P 点（2 m）：M 从 −30 变到 +33，Q = (33 − (−30)) / 2 = <b>+31.5</b>
+P 点 → C 端（2 m）：M 从 33 变到 0，Q = (0 − 33) / 2 = <b>−16.5</b></div>
+<h3>AB 杆（有均布荷载 → Q 是斜直线）</h3>
+<p>用"上侧受拉为负"的数值：M(0) = −16，M(4) = −28。取 A 端剪力为 V<sub>A</sub>，则 M(4) = M(0) + 4V<sub>A</sub> − 15×4²/2：</p>
+<div class="eq">−28 = −16 + 4V_A − 120   →   V_A = <b>27</b>
+Q(x) = 27 − 15x   →   Q(0)=+27，Q(4)=<b>−33</b>
+Q = 0 的位置：x = 27 / 15 = <b>1.8 m</b>（刚好是 M 图的极值点）</div>
+<h3>BD 杆</h3>
+<p>M 是常数（斜率为 0），所以 <b>Q = 0</b>。</p>
+<button id="qPlay">▶ 播放 / 重播</button>
+<svg id="figQ" viewBox="0 0 640 390"></svg>
+<h3>自检清单</h3>
+<table>
+<tr><th>检查项</th><th>过程</th><th>结果</th></tr>
+<tr><td>B 点力矩平衡</td><td>28 − 30 + 2</td><td>0 ✓</td></tr>
+<tr><td>B 点竖向力</td><td>AB 传来 33 + BC 传来 31.5 = 柱 BD 受压</td><td>64.5 kN</td></tr>
+<tr><td>水平方向</td><td>没有水平荷载，BD 剪力为 0，A、C 的水平反力均为 0</td><td>✓</td></tr>
+<tr><td>整体竖向平衡</td><td>V<sub>A</sub> 27 + V<sub>C</sub> 16.5 + V<sub>D</sub> 64.5</td><td>108 = 15×4 + 48 ✓</td></tr>
+<tr><td>Q 与 M 的关系</td><td>AB 上 Q=0 的点 x=1.8 m，恰好是 M 极值点</td><td>✓</td></tr>
+</table>
+</section>
+
+<!-- ================= 9 ================= -->
+<section id="s9">
+<h2>9　补课：力法和图乘法到底是什么</h2>
+<p>前面用位移法已经把本题解完了。现在换个角度：用<b>力法</b>来算 §4 里那个"−36"。你会看到<b>力法的思路</b>和<b>图乘法的用处</b>。</p>
+<h3>9.1 力法：拆掉多余约束，再用一个力顶回来</h3>
+<p>取 BC 杆：B 端固定，C 端是铰（竖向被顶住；水平方向忽略杆的伸缩，不影响弯矩）。这是 1 次超静定。力法的做法：</p>
+<p>① 把 C 的竖向支承<b>拆掉</b>，BC 变成悬臂梁；P 一压，C 端会<b>垂下去一截 Δ<sub>1P</sub></b>。<br>
+② 在 C 端加一个向上的未知力 <b>X<sub>1</sub></b>，把 C 点顶回原来的位置，使 C 点位移 = 0。<br>
+拖动滑块，找一找 X<sub>1</sub> 取多大时，C 点刚好回到原位：</p>
+<svg id="fig9a" viewBox="0 0 640 260"></svg>
+<div class="ctl">向上顶的力 X<sub>1</sub> = <span class="val" id="v9">0</span> kN<input type="range" id="x9" min="0" max="30" value="0" step="0.5"></div>
+<div class="tip" id="info9a"></div>
+<div class="eq">变形协调方程：δ₁₁·X₁ + Δ₁P = 0
+δ₁₁：C 点加单位力时 C 点的位移（"柔度"）
+Δ₁P：只有荷载 P 时 C 点的位移</div>
+<h3>9.2 图乘法：把"积分"变成"面积 × 高度"</h3>
+<p>力法里的 δ₁₁、Δ₁P 本来要做积分：Δ = ∫ M̄·M<sub>P</sub> / EI dx。<b>图乘法</b>说：如果两张弯矩图里<b>有一张是直线</b>（EI 常数、杆是直的），这个积分就等于</p>
+<div class="eq"><b>∫ M̄·M<sub>P</sub> dx / EI = ω × y<sub>c</sub> / EI</b>
+ω：一张图（弯矩图）的面积
+y<sub>c</sub>：这个面积的形心位置，对应在<b>另一张直线图</b>上的纵坐标</div>
+<p>点"下一步"，一步步算 Δ<sub>1P</sub>：</p>
+<div class="ctl"><button id="b9n">下一步 ▶</button><button id="b9r" class="alt">↺ 重来</button></div>
+<svg id="fig9b" viewBox="0 0 640 380"></svg>
+<div class="tip" id="info9b"></div>
+<table>
+<tr><th>常用图形</th><th>面积 ω</th><th>形心位置</th></tr>
+<tr><td>矩形（高 h，底 b）</td><td>bh</td><td>底边中点</td></tr>
+<tr><td>三角形（一端为 h，另一端为 0）</td><td>bh/2</td><td>距高 h 的那一端 b/3</td></tr>
+<tr><td>二次抛物线（顶点在中间，满拱）</td><td>2bh/3</td><td>中点</td></tr>
+<tr><td>半拱抛物线（顶点在端部）</td><td>bh/3</td><td>距顶点 3b/4</td></tr>
+</table>
+<div class="ok"><b>算完的收获：</b>X<sub>1</sub> = 15 kN，也就是 C 端竖向支承力是 15 kN。于是 B 端弯矩 = 48×2 − 15×4 = <span class="val">36 kN·m</span>。这正是 §4 里 3Pl/16 = 36 的来历。位移法里查的"表"，很多就是用力法 + 图乘法推出来的。</div>
+<div class="tip"><b>为什么整题不用力法？</b>整个刚架是 4 次超静定，要设 X₁～X₄，画 5 张 M 图，算 10 个 δ 和 4 个 Δ，解 4×4 方程组；位移法只解 1 元一次方程。</div>
+</section>
+
+<!-- ================= 10 ================= -->
+<section id="s10">
+<h2>10　总结与自测</h2>
+<h3>位移法五步</h3>
+<table>
+<tr><th>步</th><th>做什么</th><th>本题结果</th></tr>
+<tr><td>①</td><td>定未知数：节点的独立位移</td><td>只有 θ<sub>B</sub>（B 点不能平移）</td></tr>
+<tr><td>②</td><td>锁住节点，查固端弯矩</td><td>AB：−20/+20；BC：−36；BD：0</td></tr>
+<tr><td>③</td><td>转角位移方程（刚度 × θ + 固端弯矩）</td><td>2iθ−20、4iθ+20、3iθ−36、iθ、−iθ</td></tr>
+<tr><td>④</td><td>节点平衡 ΣM = 0 解 θ</td><td>8iθ − 16 = 0 → iθ = 2</td></tr>
+<tr><td>⑤</td><td>代回求杆端弯矩，画 M、Q 图，检验</td><td>−16、28、−30、2、−2；Q：27、−33、31.5、−16.5、0</td></tr>
+</table>
+<h3>概念速记</h3>
+<table>
+<tr><th>概念</th><th>一句话</th></tr>
+<tr><td>刚节点</td><td>焊死，杆端转角相同，夹角不变</td></tr>
+<tr><td>超静定</td><td>未知力多于平衡方程，要靠变形条件补方程</td></tr>
+<tr><td>力法</td><td>以"多余的力"为未知数，列位移协调方程</td></tr>
+<tr><td>位移法</td><td>以"节点位移"为未知数，列节点平衡方程</td></tr>
+<tr><td>图乘法</td><td>求位移时，把积分变成 面积 × 形心对应的高度</td></tr>
+<tr><td>线刚度 i</td><td>i = EI / l，杆越粗越短 i 越大</td></tr>
+</table>
+<h3>自测（点开看答案）</h3>
+<details><summary>① 如果 D 端换成"完全固定"，B 点方程里 BD 杆的刚度应该是多少？</summary>
+<p>远端固定，近端刚度是 4i（不再是 i）。方程变成 (4+3+4)iθ − 16 = 0，iθ = 16/11。可见"远端约束"直接决定刚度。</p></details>
+<details><summary>② 为什么 AB 段 M 图是曲线，BC 段是折线？</summary>
+<p>AB 上有均布荷载，Q 是斜直线，M 是它的"积分"，所以是抛物线；BC 上只有一个集中力，Q 是两段常数，M 是两段斜直线，在力作用点处出现尖角。</p></details>
+<details><summary>③ AB 杆上弯矩的最大正弯矩在哪？有多大？</summary>
+<p>在 Q = 0 的位置，x = 27/15 = 1.8 m。M = −16 + 27×1.8 − 7.5×1.8² ≈ 8.3 kN·m（下侧受拉）。</p></details>
+<p class="small">提醒：本页所有结果都基于"D 端只能水平滑动"的假设和"忽略轴向变形"。如果你的原图不同，请告诉我，我来重算。</p>
+</section>
+
+</main>
+
+<script>
+const NS="http://www.w3.org/2000/svg";
+const $=id=>document.getElementById(id);
+const C={ab:'#2f6fdb',bc:'#1f9d55',bd:'#e07b00',red:'#d6336c',gray:'#8a93a6',ink:'#243b6b'};
+function mk(p,tag,a,t){const e=document.createElementNS(NS,tag);if(a){for(const k in a)e.setAttribute(k,a[k]);}if(t!==undefined)e.textContent=t;p.appendChild(e);return e;}
+const G={xA:110,xB:310,xC:510,yb:120,yD:320,k:50};
+const q0=15,P0=48;
+
+/* ---------- 位移法求解（x = iθ） ---------- */
+function solveFrame(x){
+  const M={AB:2*x-20,BA:4*x+20,BC:3*x-36,BD:x,DB:-x};
+  const VBab=(M.AB+M.BA+q0*16/2)/4;
+  const VA=q0*4-VBab;
+  const RC=(M.BC+P0*2)/4;
+  const VBbc=P0-RC;
+  return {x,M,VA,VBab,RC,VBbc,VD:VBab+VBbc};
+}
+const XEQ=2;
+function mAB(R,xx){return R.M.AB+R.VA*xx-q0*xx*xx/2;}
+function mBC(R,xx){return R.M.BC+R.VBbc*xx-(xx>2?P0*(xx-2):0);}
+/* 数值积分求挠度（EI=1，向下为正，w''=-M） */
+function integ(Mf,len,slope0,n){
+  const h=len/n;let s=slope0,ww=0,pm=Mf(0);const w=[0];
+  for(let k=1;k<=n;k++){const m=Mf(k*h);const sn=s-(pm+m)/2*h;ww+=(s+sn)/2*h;w.push(ww);s=sn;pm=m;}
+  return w;
+}
+
+/* ---------- 绘图小工具 ---------- */
+function drawD(p,cx,y){
+  const g=mk(p,'g');
+  mk(g,'rect',{x:cx-24,y:y,width:48,height:10,fill:'#cfd5e2',stroke:'#555','stroke-width':2});
+  mk(g,'circle',{cx:cx-13,cy:y+16,r:6,fill:'#fff',stroke:'#555','stroke-width':2});
+  mk(g,'circle',{cx:cx+13,cy:y+16,r:6,fill:'#fff',stroke:'#555','stroke-width':2});
+  mk(g,'line',{x1:cx-110,y1:y+22,x2:cx+110,y2:y+22,stroke:'#555','stroke-width':3});
+  for(let i=0;i<=22;i++)mk(g,'line',{x1:cx-110+i*10,y1:y+22,x2:cx-118+i*10,y2:y+30,stroke:'#999'});
+  return g;
+}
+function frameBase(svg,o){
+  o=o||{};const g={};const {xA,xB,xC,yb,yD}=G;
+  const st=o.style||'color';
+  const w=st==='ghost'?2.5:(st==='gray'?5:7);
+  const colr=c=>st==='ghost'?'#b4bccd':(st==='gray'?'#aeb7c9':c);
+  const dash=st==='ghost'?'6 5':'none';
+  const ln=(p,x1,y1,x2,y2,c)=>mk(p,'line',{x1,y1,x2,y2,stroke:colr(c),'stroke-width':w,'stroke-linecap':'round','stroke-dasharray':dash});
+  g.AB=mk(svg,'g');ln(g.AB,xA,yb,xB,yb,C.ab);
+  g.BC=mk(svg,'g');ln(g.BC,xB,yb,xC,yb,C.bc);
+  g.BD=mk(svg,'g');ln(g.BD,xB,yb,xB,yD,C.bd);
+  g.A=mk(svg,'g');
+  mk(g.A,'line',{x1:xA,y1:yb-36,x2:xA,y2:yb+36,stroke:'#555','stroke-width':5});
+  for(let i=0;i<6;i++)mk(g.A,'line',{x1:xA,y1:yb-36+i*14+14,x2:xA-12,y2:yb-36+i*14,stroke:'#555','stroke-width':2});
+  g.C=mk(svg,'g');
+  mk(g.C,'path',{d:`M${xC},${yb+3} l-13,19 l26,0 z`,fill:'#fff',stroke:'#555','stroke-width':2});
+  mk(g.C,'line',{x1:xC-34,y1:yb+22,x2:xC+34,y2:yb+22,stroke:'#555','stroke-width':3});
+  for(let i=0;i<8;i++)mk(g.C,'line',{x1:xC-34+i*9,y1:yb+22,x2:xC-42+i*9,y2:yb+30,stroke:'#999'});
+  if(!o.noD)g.D=drawD(svg,xB,yD);
+  g.B=mk(svg,'g');
+  if(!o.noB)mk(g.B,'rect',{x:xB-9,y:yb-9,width:18,height:18,rx:3,fill:C.ink});
+  if(o.labels!==false){
+    const t=(x,y,s)=>mk(svg,'text',{x,y,'font-size':17,'font-weight':700,fill:C.ink},s);
+    t(xA+10,yb+32,'A');t(xB-30,yb+30,'B');t(xC+14,yb+6,'C');t(xB+36,yD+8,'D');
+  }
+  if(o.loads!==false){
+    g.q=mk(svg,'g');
+    for(let i=0;i<=8;i++){const x=xA+i*25;
+      mk(g.q,'line',{x1:x,y1:yb-52,x2:x,y2:yb-12,stroke:C.red,'stroke-width':2});
+      mk(g.q,'path',{d:`M${x-4},${yb-19} L${x},${yb-10} L${x+4},${yb-19}`,fill:'none',stroke:C.red,'stroke-width':2});}
+    mk(g.q,'line',{x1:xA,y1:yb-52,x2:xB,y2:yb-52,stroke:C.red,'stroke-width':2});
+    mk(g.q,'text',{x:xA+100,y:yb-60,'text-anchor':'middle','font-size':14,fill:C.red,'font-weight':700},'q = 15 kN/m');
+    g.P=mk(svg,'g');const px=xB+100;
+    mk(g.P,'line',{x1:px,y1:yb-72,x2:px,y2:yb-10,stroke:C.red,'stroke-width':4});
+    mk(g.P,'path',{d:`M${px-7},${yb-20} L${px},${yb-8} L${px+7},${yb-20}`,fill:'none',stroke:C.red,'stroke-width':4});
+    mk(g.P,'text',{x:px+10,y:yb-52,'font-size':14,fill:C.red,'font-weight':700},'P = 48 kN');
+  }
+  if(o.dim){
+    g.dim=mk(svg,'g');
+    const t=(x,y,s)=>mk(g.dim,'text',{x,y,'text-anchor':'middle','font-size':13,fill:'#667085','font-style':'italic'},s);
+    t(xA+100,yb+26,'4 m');t(xB+50,yb+26,'2 m');t(xB+150,yb+26,'2 m');t(xB+34,(yb+yD)/2,'4 m');
+    mk(g.dim,'line',{x1:xB+100,y1:yb+4,x2:xB+100,y2:yb+14,stroke:'#667085'});
+  }
+  return g;
+}
+function lab(svg,x,y,t,c,anchor){
+  const e=mk(svg,'text',{x,y,'font-size':14,'font-weight':700,fill:c,'text-anchor':anchor||'middle'},t);
+  e.style.opacity=0;e.style.transition='opacity .8s';return e;
+}
+function addShape(svg,pts,color){
+  const poly=mk(svg,'polygon',{points:pts.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' '),fill:color,stroke:color,'stroke-width':2.5,'stroke-linejoin':'round'});
+  let len=2000;try{len=poly.getTotalLength();}catch(e){}
+  poly.style.fillOpacity=0;poly.style.strokeDasharray=len;poly.style.strokeDashoffset=len;
+  poly.style.transition='stroke-dashoffset 1.2s ease, fill-opacity 1.2s ease';
+  return {show(){poly.style.strokeDashoffset=0;poly.style.fillOpacity=.22;},hide(){poly.style.strokeDashoffset=len;poly.style.fillOpacity=0;}};
+}
+function onView(el,fn){
+  if('IntersectionObserver' in window){
+    const io=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){fn();io.disconnect();}});},{threshold:.4});io.observe(el);
+  }else fn();
+}
+
+/* ================= 0 题目图 ================= */
+(function(){
+  const svg=$('fig0');const g=frameBase(svg,{dim:true});
+  const items=[
+    ['A 固定端',[g.A],'<b>A 固定端</b>：像被水泥浇死在墙里，不能左右动、上下动，也不能转。共 <b>3 个约束</b>。'],
+    ['B 刚节点',[g.B],'<b>B 刚节点</b>：三根杆在这里焊死，杆端转角相同、夹角不变（§1 详讲）。'],
+    ['C 固定铰支座',[g.C],'<b>C 固定铰支座</b>：像一个销钉钉在地上，不能左右动、上下动，但可以绕销钉转。共 <b>2 个约束</b>（水平力、竖直力）。'],
+    ['D 导向支座',[g.D],'<b>D 导向支座（按我的假设）</b>：像夹在水平滑槽里，不能转、不能上下，只能水平滑。共 <b>2 个约束</b>。'],
+    ['均布荷载 q',[g.q],'<b>均布荷载</b>：AB 杆全长每米压 15 kN，总共 15 × 4 = 60 kN。'],
+    ['集中力 P',[g.P],'<b>集中力</b>：BC 杆正中间（离 B、C 各 2 m）压下 48 kN。'],
+    ['尺寸',[g.dim],'<b>尺寸</b>：AB、BC、BD 都是 4 m 长。']
+  ];
+  items.forEach(it=>{const b=document.createElement('button');b.className='alt';b.textContent=it[0];
+    b.onclick=()=>{items.forEach(x=>x[1].forEach(e=>e.classList.remove('pulse')));
+      it[1].forEach(e=>{void e.getBoundingClientRect();e.classList.add('pulse');});
+      $('legendText').innerHTML=it[2];};
+    $('legendBtns').appendChild(b);});
+})();
+
+/* ================= 1 刚节点 ================= */
+(function(){
+  const svg=$('fig1'),cx=320,cy=110,Lg=120;let mode='rigid';
+  [[cx-Lg,cy],[cx+Lg,cy],[cx,cy+Lg]].forEach(p=>mk(svg,'line',{x1:cx,y1:cy,x2:p[0],y2:p[1],stroke:'#c3cadb','stroke-width':4,'stroke-dasharray':'6 5'}));
+  const gL=mk(svg,'g'),gR=mk(svg,'g'),gD=mk(svg,'g');
+  const bar=(g,x2,y2,c)=>mk(g,'line',{x1:cx,y1:cy,x2,y2,stroke:c,'stroke-width':8,'stroke-linecap':'round'});
+  bar(gL,cx-Lg,cy,C.ab);bar(gR,cx+Lg,cy,C.bc);bar(gD,cx,cy+Lg,C.bd);
+  mk(svg,'circle',{cx,cy,r:9,fill:C.ink});
+  mk(svg,'text',{x:cx-Lg,y:cy-12,'font-size':15,fill:C.ab,'font-weight':700,'text-anchor':'middle'},'AB');
+  mk(svg,'text',{x:cx+Lg,y:cy-12,'font-size':15,fill:C.bc,'font-weight':700,'text-anchor':'middle'},'BC');
+  mk(svg,'text',{x:cx+14,y:cy+Lg+4,'font-size':15,fill:C.bd,'font-weight':700},'BD');
+  function upd(){
+    const th=+$('th1').value;$('v1').textContent=th+'°';
+    const rot=a=>`rotate(${a} ${cx} ${cy})`;
+    if(mode==='rigid'){
+      gL.setAttribute('transform',rot(th));gR.setAttribute('transform',rot(th));gD.setAttribute('transform',rot(th));
+      $('info1').innerHTML=`<b>刚接：</b>三根杆像焊在一起，整体一起转了 <span class="val">${th}°</span>。BC 与 BD 的夹角始终是 <span class="val">90°</span>，AB 与 BC 仍成一条直线（180°）。夹角不变，杆端转角相同。`;
+    }else{
+      gL.setAttribute('transform','');gR.setAttribute('transform',rot(th));gD.setAttribute('transform',rot(-th));
+      $('info1').innerHTML=`<b>铰接：</b>各杆可以各转各的。BC 与 BD 的夹角变成 <span class="val">${90-2*th}°</span>，AB 与 BC 的夹角变成 <span class="val">${180-th}°</span>。夹角变了，所以铰节点处的杆端转角不相同，这样的节点就要多设未知数。`;
+    }
+    $('b1r').className=mode==='rigid'?'':'alt';$('b1h').className=mode==='hinge'?'':'alt';
+  }
+  $('b1r').onclick=()=>{mode='rigid';upd();};$('b1h').onclick=()=>{mode='hinge';upd();};
+  $('th1').oninput=upd;upd();
+})();
+
+/* ================= 2 弯矩与剪力 ================= */
+(function(){
+  const svg=$('fig2'),x0=80,L=480,y0=70,xm=x0+L/2,x1=x0+L;
+  function render(){
+    const Pv=+$('p2').value;$('v2').textContent=Pv;svg.innerHTML='';
+    const amp=Pv*0.45;const wf=u=>{u=Math.min(u,1-u);return amp*u*(3-4*u*u);};
+    const top=[],bot=[];
+    for(let i=0;i<=60;i++){const u=i/60,x=x0+u*L,y=y0+wf(u);top.push(x.toFixed(1)+','+(y-8).toFixed(1));bot.push(x.toFixed(1)+','+(y+8).toFixed(1));}
+    mk(svg,'polygon',{points:top.join(' ')+' '+bot.slice().reverse().join(' '),fill:'#e6ebf7',stroke:'#aab3c5'});
+    mk(svg,'polyline',{points:top.join(' '),fill:'none',stroke:C.ab,'stroke-width':3});
+    mk(svg,'polyline',{points:bot.join(' '),fill:'none',stroke:C.red,'stroke-width':3});
+    mk(svg,'text',{x:x0+6,y:y0-18,'font-size':13,fill:C.ab,'font-weight':700},'上侧：被压短');
+    mk(svg,'text',{x:x0+6,y:y0+44,'font-size':13,fill:C.red,'font-weight':700},'下侧：被拉长（受拉侧）');
+    mk(svg,'path',{d:`M${x0},${y0+8} l-14,22 l28,0 z`,fill:'#fff',stroke:'#555','stroke-width':2});
+    mk(svg,'path',{d:`M${x1},${y0+8} l-14,22 l28,0 z`,fill:'#fff',stroke:'#555','stroke-width':2});
+    const ya=y0+amp-9;
+    mk(svg,'line',{x1:xm,y1:ya-30-Pv*0.3,x2:xm,y2:ya,stroke:C.red,'stroke-width':4});
+    mk(svg,'path',{d:`M${xm-7},${ya-12} L${xm},${ya} L${xm+7},${ya-12}`,fill:'none',stroke:C.red,'stroke-width':4});
+    mk(svg,'text',{x:xm+12,y:ya-20-Pv*0.3,'font-size':14,fill:C.red,'font-weight':700},'P = '+Pv+' kN');
+    const yM=190;
+    mk(svg,'text',{x:x0,y:yM-14,'font-size':14,fill:C.ink,'font-weight':700},'弯矩 M 图（画在受拉侧：下侧）');
+    mk(svg,'line',{x1:x0,y1:yM,x2:x1,y2:yM,stroke:'#999'});
+    mk(svg,'polygon',{points:`${x0},${yM} ${xm},${yM+Pv*0.5} ${x1},${yM}`,fill:'rgba(214,51,108,.2)',stroke:C.red,'stroke-width':2});
+    mk(svg,'text',{x:xm+8,y:yM+Pv*0.5+16,'font-size':14,fill:C.red,'font-weight':700},'M = PL/4 = '+Pv+' kN·m');
+    const yQ=325;
+    mk(svg,'text',{x:x0,y:yQ-50,'font-size':14,fill:C.ink,'font-weight':700},'剪力 Q 图（上正下负）');
+    mk(svg,'line',{x1:x0,y1:yQ,x2:x1,y2:yQ,stroke:'#999'});
+    const h=Pv/2*0.7;
+    mk(svg,'polygon',{points:`${x0},${yQ} ${x0},${yQ-h} ${xm},${yQ-h} ${xm},${yQ+h} ${x1},${yQ+h} ${x1},${yQ}`,fill:'rgba(47,111,219,.2)',stroke:C.ab,'stroke-width':2});
+    mk(svg,'text',{x:x0+10,y:yQ-h-6,'font-size':13,fill:C.ab,'font-weight':700},'+P/2 = '+(Pv/2));
+    mk(svg,'text',{x:x1-10,y:yQ+h+16,'font-size':13,fill:C.ab,'font-weight':700,'text-anchor':'end'},'−P/2 = −'+(Pv/2));
+    $('info2').innerHTML=`P = ${Pv} kN 时：中点弯矩 M = P×4/4 = <span class="val">${Pv} kN·m</span>，剪力 Q = ±P/2 = <span class="val">±${Pv/2} kN</span>。力翻倍，M 和 Q 都翻倍，而且 M 图在力作用的位置出现"尖角"，Q 图在这里"跳"一下。`;
+  }
+  $('p2').oninput=render;render();
+})();
+
+/* ================= 5 转动刚度 ================= */
+(function(){
+  const svg=$('fig5');let type='fixed';const x0=110,L=420,y0=100;
+  const inf={fixed:{k:4,f:2,nm:'远端固定',S:'4i',Cc:'1/2',fm:'2iθ'},pinned:{k:3,f:0,nm:'远端铰——本题 BC 杆的 C 端（固定铰）',S:'3i',Cc:'0',fm:'0'},guided:{k:1,f:-1,nm:'远端导向——本题 BD 杆的 D 端',S:'i',Cc:'−1',fm:'−iθ'}};
+  function shape(u,th){if(type==='fixed')return th*L*u*(1-u)*(1-u);if(type==='pinned')return th*L*u*(1-u)*(1-u/2);return th*L*u*(1-u/2);}
+  function render(){
+    const th=+$('th5').value/100;$('v5').textContent=th.toFixed(2);svg.innerHTML='';
+    const pts=[];for(let i=0;i<=60;i++){const u=i/60;pts.push((x0+u*L).toFixed(1)+','+(y0+shape(u,th)).toFixed(1));}
+    mk(svg,'line',{x1:x0,y1:y0,x2:x0+L,y2:y0,stroke:'#b4bccd','stroke-width':2,'stroke-dasharray':'6 5'});
+    mk(svg,'polyline',{points:pts.join(' '),fill:'none',stroke:'#7a4fd6','stroke-width':7,'stroke-linecap':'round'});
+    mk(svg,'rect',{x:x0-9,y:y0-9,width:18,height:18,rx:3,fill:C.ink,transform:`rotate(${Math.atan(th)*180/Math.PI} ${x0} ${y0})`});
+    mk(svg,'text',{x:x0-20,y:y0-18,'font-size':14,fill:C.ink,'font-weight':700},'近端（转 θ）');
+    const x1=x0+L,y1=y0+shape(1,th);
+    if(type==='fixed'){
+      mk(svg,'line',{x1,y1:y0-34,x2:x1,y2:y0+34,stroke:'#555','stroke-width':5});
+      for(let i=0;i<6;i++)mk(svg,'line',{x1,y1:y0-34+i*13+13,x2:x1+12,y2:y0-34+i*13,stroke:'#555','stroke-width':2});
+    }else if(type==='pinned'){
+      mk(svg,'path',{d:`M${x1},${y0+4} l-14,24 l28,0 z`,fill:'#fff',stroke:'#555','stroke-width':2});
+    }else{
+      mk(svg,'line',{x1:x1+20,y1:y0-40,x2:x1+20,y2:y0+120,stroke:'#555','stroke-width':3});
+      for(let i=0;i<12;i++)mk(svg,'line',{x1:x1+20,y1:y0-40+i*14,x2:x1+30,y2:y0-32+i*14,stroke:'#999'});
+      mk(svg,'circle',{cx:x1+10,cy:y1-12,r:5,fill:'#fff',stroke:'#555','stroke-width':2});
+      mk(svg,'circle',{cx:x1+10,cy:y1+12,r:5,fill:'#fff',stroke:'#555','stroke-width':2});
+      mk(svg,'rect',{x:x1-4,y:y1-22,width:8,height:44,fill:'#cfd5e2',stroke:'#555','stroke-width':2});
+      mk(svg,'text',{x:x1-60,y:y0+150,'font-size':13,fill:'#667085'},'↑ 远端可以侧移（滑）');
+    }
+    const I=inf[type];const bx=200;
+    mk(svg,'text',{x:20,y:236,'font-size':14,fill:C.ink,'font-weight':700},'近端弯矩');
+    mk(svg,'rect',{x:bx,y:222,width:Math.max(0,I.k*th*150),height:18,fill:C.red});
+    mk(svg,'text',{x:bx+I.k*th*150+8,y:236,'font-size':13,fill:C.red,'font-weight':700},`${I.S}·θ`);
+    mk(svg,'text',{x:20,y:286,'font-size':14,fill:C.ink,'font-weight':700},'远端弯矩');
+    const fl=I.f*th*150;
+    mk(svg,'rect',{x:fl>=0?bx:bx+fl,y:272,width:Math.abs(fl),height:18,fill:C.ab});
+    mk(svg,'text',{x:fl>=0?bx+fl+8:bx+fl-8,y:286,'font-size':13,fill:C.ab,'font-weight':700,'text-anchor':fl>=0?'start':'end'},I.fm==='0'?'0':I.fm);
+    mk(svg,'line',{x1:bx,y1:216,x2:bx,y2:296,stroke:'#999'});
+    $('info5').innerHTML=`<b>${I.nm}</b>：把近端转 θ，需要在近端施加 <span class="val">M = ${I.S}·θ</span>（${I.k}i = ${I.k}×EI/l）；远端会随之产生 <span class="val">${I.fm}</span>（传递系数 ${I.Cc}）。<br>注意：远端固定时，近端要用的力最大（4i）；越"软"的远端，近端越容易转。`;
+    $('b5f').className=type==='fixed'?'':'alt';$('b5p').className=type==='pinned'?'':'alt';$('b5g').className=type==='guided'?'':'alt';
+  }
+  $('b5f').onclick=()=>{type='fixed';render();};$('b5p').onclick=()=>{type='pinned';render();};$('b5g').onclick=()=>{type='guided';render();};
+  $('th5').oninput=render;render();
+})();
+
+/* ================= 6 放开节点（核心） ================= */
+(function(){
+  const svg=$('fig6'),cv=$('fig6b');
+  frameBase(svg,{style:'ghost',noD:true,noB:true});
+  const dyn=mk(svg,'g');
+  /* 小图：ΣM_B 随 iθ 变化 */
+  mk(cv,'line',{x1:40,y1:60,x2:310,y2:60,stroke:'#999','stroke-width':1.5});
+  mk(cv,'line',{x1:40,y1:10,x2:40,y2:210,stroke:'#999','stroke-width':1.5});
+  mk(cv,'line',{x1:40,y1:172,x2:300,y2:32,stroke:C.ab,'stroke-width':3});
+  mk(cv,'text',{x:6,y:18,'font-size':12,fill:'#555'},'ΣM_B');
+  mk(cv,'text',{x:8,y:64,'font-size':11,fill:'#555'},'0');
+  mk(cv,'text',{x:4,y:176,'font-size':11,fill:'#555'},'−16');
+  [0,1,2].forEach(v=>mk(cv,'text',{x:40+v*104-6,y:78,'font-size':11,fill:'#555'},String(v)));
+  mk(cv,'text',{x:236,y:98,'font-size':12,fill:C.ink},'iθ（kN·m）');
+  mk(cv,'circle',{cx:248,cy:60,r:8,fill:'none',stroke:'#1f9d55','stroke-width':2});
+  mk(cv,'text',{x:196,y:48,'font-size':12,fill:'#1f9d55','font-weight':700},'解：iθ = 2');
+  const mark=mk(cv,'circle',{cx:40,cy:172,r:6,fill:C.red});
+  function render(t){
+    const x=XEQ*t,R=solveFrame(x),sc=1.6,{xA,xB,yb,yD}=G;
+    $('v6').textContent=Math.round(t*100)+'%';
+    dyn.innerHTML='';
+    const wAB=integ(xx=>mAB(R,xx),4,0,80),wBC=integ(xx=>mBC(R,xx),4,4*x,80);
+    const pa=[],pb=[],pd=[];
+    for(let i=0;i<=80;i++){const s=i*0.05;
+      pa.push((xA+50*s).toFixed(1)+','+(yb+sc*wAB[i]).toFixed(1));
+      pb.push((xB+50*s).toFixed(1)+','+(yb+sc*wBC[i]).toFixed(1));
+      pd.push((xB-sc*4*x*(s-s*s/8)).toFixed(1)+','+(yb+50*s).toFixed(1));}
+    const pl=(pts,c)=>mk(dyn,'polyline',{points:pts.join(' '),fill:'none',stroke:c,'stroke-width':6,'stroke-linecap':'round','stroke-linejoin':'round'});
+    pl(pa,C.ab);pl(pb,C.bc);pl(pd,C.bd);
+    drawD(dyn,xB-sc*8*x,yD);
+    const phi=Math.atan(sc*4*x/50)*180/Math.PI;
+    mk(dyn,'rect',{x:xB-11,y:yb-11,width:22,height:22,rx:3,fill:C.ink,transform:`rotate(${phi} ${xB} ${yb})`});
+    if(t<0.995){
+      mk(dyn,'rect',{x:xB-22,y:yb-22,width:44,height:44,rx:6,fill:'none',stroke:C.red,'stroke-width':3,'stroke-dasharray':'5 3'});
+      mk(dyn,'text',{x:xB-34,y:yb-28,'font-size':20},'🔒');
+    }else mk(dyn,'text',{x:xB-34,y:yb-28,'font-size':20},'✔');
+    const sumM=R.M.BA+R.M.BC+R.M.BD;
+    mark.setAttribute('cx',(40+x*104).toFixed(1));mark.setAttribute('cy',(172-56*x).toFixed(1));
+    mark.setAttribute('fill',Math.abs(sumM)<0.05?'#1f9d55':C.red);
+    $('info6').innerHTML=t<0.995
+      ?`🔒 B 点被锁着：θ<sub>B</sub> = <b>${(8*t).toFixed(2)}/EI</b>（顺时针）。三根杆在 B 端的弯矩之和 ΣM<sub>B</sub> = <span class="val">${sumM.toFixed(1)}</span> kN·m，不是 0，说明"锁"还在出力（锁的力矩 = ${(-sumM).toFixed(1)} kN·m）。继续放开……`
+      :`✔ 完全放开：θ<sub>B</sub> = <b>8/EI</b>（iθ = 2）。ΣM<sub>B</sub> = <span style="color:#1f9d55;font-weight:700">0</span>，锁不再需要出力，这就是结构的真实状态。<br><span class="small">图中弯曲程度是为了看清楚而夸大的；橙色柱 BD 的下端（D）向左滑动，因为它是导向支座。</span>`;
+    const f=v=>v.toFixed(1).replace('-','−');
+    $('tbl6').innerHTML=`<tr><th>杆端</th><th>转角位移方程</th><th>当前值 (kN·m)</th></tr>
+    <tr><td>M<sub>AB</sub></td><td>2iθ − 20</td><td>${f(R.M.AB)}</td></tr>
+    <tr><td>M<sub>BA</sub></td><td>4iθ + 20</td><td>${f(R.M.BA)}</td></tr>
+    <tr><td>M<sub>BC</sub></td><td>3iθ − 36</td><td>${f(R.M.BC)}</td></tr>
+    <tr><td>M<sub>BD</sub></td><td>iθ</td><td>${f(R.M.BD)}</td></tr>
+    <tr><th colspan="2">ΣM<sub>B</sub> = M<sub>BA</sub> + M<sub>BC</sub> + M<sub>BD</sub></th><th style="color:${Math.abs(sumM)<0.05?'#1f9d55':C.red}">${f(sumM)}</th></tr>`;
+  }
+  let raf=null;
+  function play(){
+    cancelAnimationFrame(raf);const s0=+$('t6').value/100,dur=3200*(1-s0)+300,t0=performance.now();
+    (function step(n){const p=Math.min(1,(n-t0)/dur),e=1-Math.pow(1-p,3),t=s0+(1-s0)*e;
+      $('t6').value=t*100;render(t);if(p<1)raf=requestAnimationFrame(step);})(t0);
+  }
+  $('b6play').onclick=play;
+  $('b6reset').onclick=()=>{cancelAnimationFrame(raf);$('t6').value=0;render(0);};
+  $('t6').oninput=()=>{cancelAnimationFrame(raf);render(+$('t6').value/100);};
+  render(0);
+})();
+
+/* ================= 7、8 M 图 / Q 图 ================= */
+function buildDiagram(id,kind){
+  const svg=$(id),R=solveFrame(XEQ),{xA,xB,xC,yb,yD,k}=G;
+  frameBase(svg,{style:'gray',loads:false});
+  const groups=[];
+  if(kind==='M'){
+    const s=2.1;
+    const pa=[[xA,yb]];for(let i=0;i<=40;i++){const xx=i/10;pa.push([xA+k*xx,yb+s*mAB(R,xx)]);}pa.push([xB,yb]);
+    groups.push({sh:addShape(svg,pa,C.ab),labs:[lab(svg,xA+18,yb-16*s-6,'16',C.ab),lab(svg,xB-24,yb-28*s-6,'28',C.ab),lab(svg,xA+1.8*k,yb+8.3*s+18,'8.3',C.ab)]});
+    const pb=[[xB,yb],[xB,yb-30*s],[xB+100,yb+33*s],[xC,yb]];
+    groups.push({sh:addShape(svg,pb,C.bc),labs:[lab(svg,xB+26,yb-30*s-6,'30',C.bc),lab(svg,xB+100,yb+33*s+18,'33',C.bc)]});
+    const pd=[[xB,yb],[xB-2*s,yb],[xB-2*s,yD],[xB,yD]];
+    groups.push({sh:addShape(svg,pd,C.bd),labs:[lab(svg,xB-26,(yb+yD)/2,'2',C.bd)]});
+  }else{
+    const s=1.4;
+    const pa=[[xA,yb],[xA,yb-27*s],[xB,yb+33*s],[xB,yb]];
+    const dot=mk(svg,'circle',{cx:xA+1.8*k,cy:yb,r:4,fill:C.ab});dot.style.opacity=0;dot.style.transition='opacity .8s';
+    groups.push({sh:addShape(svg,pa,C.ab),labs:[lab(svg,xA+10,yb-27*s-6,'+27',C.ab),lab(svg,xB-26,yb+33*s+16,'−33',C.ab),lab(svg,xA+1.8*k,yb-10,'x=1.8 m 处 Q=0',C.ab),dot]});
+    const pb=[[xB,yb],[xB,yb-31.5*s],[xB+100,yb-31.5*s],[xB+100,yb+16.5*s],[xC,yb+16.5*s],[xC,yb]];
+    groups.push({sh:addShape(svg,pb,C.bc),labs:[lab(svg,xB+50,yb-31.5*s-6,'+31.5',C.bc),lab(svg,xB+150,yb+16.5*s+16,'−16.5',C.bc)]});
+    groups.push({sh:addShape(svg,[[xB,yb],[xB,yD],[xB+0.1,yD],[xB+0.1,yb]],C.bd),labs:[lab(svg,xB+34,(yb+yD)/2,'Q = 0',C.bd)]});
+  }
+  function hideAll(){groups.forEach(g=>{g.sh.hide();g.labs.forEach(l=>l.style.opacity=0);});}
+  function play(){hideAll();groups.forEach((g,i)=>setTimeout(()=>{g.sh.show();g.labs.forEach(l=>l.style.opacity=1);},400+i*1300));}
+  hideAll();onView(svg,play);return play;
+}
+$('mPlay').onclick=buildDiagram('figM','M');
+$('qPlay').onclick=buildDiagram('figQ','Q');
+
+/* ================= 9a 力法：悬臂梁 + X1 ================= */
+(function(){
+  const svg=$('fig9a'),x0=80,L=440,y0=100;
+  function render(){
+    const X=+$('x9').value;$('v9').textContent=X;svg.innerHTML='';
+    const w=integ(xx=>X*(4-xx)-48*Math.max(0,2-xx),4,0,80);
+    const sc=0.2,pts=[];
+    for(let i=0;i<=80;i++)pts.push((x0+L*i/80).toFixed(1)+','+(y0+sc*w[i]).toFixed(1));
+    const tip=w[80],yt=y0+sc*tip,ym=y0+sc*w[40];
+    mk(svg,'line',{x1:x0,y1:y0,x2:x0+L+40,y2:y0,stroke:'#b4bccd','stroke-width':2,'stroke-dasharray':'6 5'});
+    mk(svg,'line',{x1:x0,y1:y0-36,x2:x0,y2:y0+36,stroke:'#555','stroke-width':5});
+    for(let i=0;i<6;i++)mk(svg,'line',{x1:x0,y1:y0-36+i*14+14,x2:x0-12,y2:y0-36+i*14,stroke:'#555','stroke-width':2});
+    mk(svg,'polyline',{points:pts.join(' '),fill:'none',stroke:C.bc,'stroke-width':7,'stroke-linecap':'round'});
+    mk(svg,'text',{x:x0-10,y:y0-44,'font-size':14,fill:C.ink,'font-weight':700},'B（固定）');
+    mk(svg,'text',{x:x0+L-6,y:y0-30,'font-size':14,fill:C.ink,'font-weight':700},'C（竖向支承已拆掉）');
+    const px=x0+L/2;
+    mk(svg,'line',{x1:px,y1:ym-66,x2:px,y2:ym-10,stroke:C.red,'stroke-width':4});
+    mk(svg,'path',{d:`M${px-7},${ym-20} L${px},${ym-8} L${px+7},${ym-20}`,fill:'none',stroke:C.red,'stroke-width':4});
+    mk(svg,'text',{x:px+10,y:ym-48,'font-size':14,fill:C.red,'font-weight':700},'P = 48 kN');
+    const xt=x0+L;
+    if(X>0){
+      mk(svg,'line',{x1:xt,y1:yt+14+X*2.5,x2:xt,y2:yt+10,stroke:C.ab,'stroke-width':4});
+      mk(svg,'path',{d:`M${xt-7},${yt+22} L${xt},${yt+10} L${xt+7},${yt+22}`,fill:'none',stroke:C.ab,'stroke-width':4});
+      mk(svg,'text',{x:xt+10,y:yt+30+X*1.5,'font-size':14,fill:C.ab,'font-weight':700},'X₁ = '+X+' kN');
+    }
+    mk(svg,'circle',{cx:xt,cy:yt,r:6,fill:Math.abs(tip)<2?'#1f9d55':C.red});
+    const ok=Math.abs(tip)<2;
+    $('info9a').innerHTML=`C 点位移 = (320 − 21.33·X<sub>1</sub>) / EI = <span class="val">${tip.toFixed(1)} / EI</span>（正=向下）。`+(ok?`<br>✔ <b>C 点回到原位了！X<sub>1</sub> = 15 kN</b>。这就是 C 处的竖向反力。`:X===0?`<br>只有 P 时，C 端垂下去 320/EI（这就是 Δ<sub>1P</sub>）。`:`<br>${tip>0?'还不够，C 点还在下面，继续加力。':'顶过头了，C 点跑到上面去了，减小一点。'}`);
+  }
+  $('x9').oninput=render;render();
+})();
+
+/* ================= 9b 图乘法 ================= */
+(function(){
+  const svg=$('fig9b'),x0=120,y1=120,y2=285;const els=[];
+  const add=(min,tag,a,t)=>{const e=mk(svg,tag,a,t);els.push({e,min});return e;};
+  const T=(x,y,s,c,anchor)=>({x,y,'font-size':14,'font-weight':700,fill:c||C.ink,'text-anchor':anchor||'start'});
+  mk(svg,'text',T(20,24,'M_P 图：只有荷载 P 作用时（悬臂梁），单位 kN·m'));
+  mk(svg,'text',T(20,200,'M̄₁ 图：C 点放一个向上的"单位力 1"时，单位 m'));
+  mk(svg,'line',{x1:x0,y1:y1,x2:x0+400,y2:y1,stroke:'#999'});mk(svg,'line',{x1:x0,y1:y2,x2:x0+400,y2:y2,stroke:'#999'});
+  mk(svg,'text',T(x0-8,y1+16,'','#555','end'),'B');mk(svg,'text',T(x0+408,y1+16,'','#555'),'C');
+  mk(svg,'text',T(x0-8,y2-8,'','#555','end'),'B');mk(svg,'text',T(x0+408,y2-8,'','#555'),'C');
+  mk(svg,'polygon',{points:`${x0},${y1} ${x0},${y1-57.6} ${x0+200},${y1}`,fill:'rgba(214,51,108,.18)',stroke:C.red,'stroke-width':2});
+  mk(svg,'text',T(x0+6,y1-62,'',C.red),'−96（上侧受拉）');
+  mk(svg,'text',T(x0+206,y1-6,'',C.red),'← P 在这里（离 B 2 m）');
+  mk(svg,'polygon',{points:`${x0},${y2} ${x0},${y2+56} ${x0+400},${y2}`,fill:'rgba(47,111,219,.15)',stroke:C.ab,'stroke-width':2});
+  mk(svg,'text',T(x0+6,y2+74,'',C.ab),'4（B 处），C 处为 0');
+  add(1,'polygon',{points:`${x0},${y1} ${x0},${y1-57.6} ${x0+200},${y1}`,fill:'rgba(214,51,108,.45)',stroke:C.red,'stroke-width':3});
+  add(1,'text',T(x0+60,y1-24,'','#7a0f33'),'面积 ω');
+  const xc=x0+200/3;
+  add(2,'line',{x1:xc,y1:y1-57.6,x2:xc,y2:y1,stroke:'#222','stroke-width':2,'stroke-dasharray':'5 4'});
+  add(2,'text',T(xc+4,y1+18,'','#222'),'形心 x_c = 2/3 m');
+  add(3,'line',{x1:xc,y1:y1,x2:xc,y2:y2+(10/3)*14,stroke:'#222','stroke-width':2,'stroke-dasharray':'5 4'});
+  add(3,'circle',{cx:xc,cy:y2+(10/3)*14,r:5,fill:'#222'});
+  add(3,'text',T(xc+10,y2+(10/3)*14+4,'','#222'),'y_c = 10/3');
+  const info=['先看两张图：M_P 是只有荷载时的弯矩图，M̄₁ 是 C 点放"单位力"时的弯矩图。两个图要"相乘"，用图乘法。',
+   '<b>第 1 步：求面积。</b>M_P 是一个三角形：底 2 m，高 96。ω = ½ × 2 × 96 = <b>96</b>（弯矩是上侧受拉，取负号：ω = −96）。',
+   '<b>第 2 步：找形心。</b>三角形的形心在距"高的那一端"1/3 底边处：x_c = 2 × 1/3 = <b>2/3 m</b>（从 B 算起）。',
+   '<b>第 3 步：在另一张图上读高度。</b>把形心位置竖直投到 M̄₁ 图上：M̄₁(x) = 4 − x，在 x = 2/3 处 y_c = 4 − 2/3 = <b>10/3</b>。',
+   '<b>第 4 步：相乘。</b>Δ<sub>1P</sub> = ω·y_c / EI = (−96) × (10/3) / EI = <b>−320/EI</b>。负号表示与单位力方向（向上）相反，即 C 点向下 320/EI。同理 δ<sub>11</sub> = (½×4×4)×(8/3)/EI = <b>64/(3EI)</b>。',
+   '<b>第 5 步：列方程。</b>δ<sub>11</sub>X<sub>1</sub> + Δ<sub>1P</sub> = 0 → X<sub>1</sub> = 320 ÷ (64/3) = <b>15 kN</b>。B 端弯矩 = 48×2 − 15×4 = <b>36 kN·m</b>，与 §4 的 3Pl/16 = 36 一致 ✓。'];
+  let step=0;
+  function render(){els.forEach(o=>o.e.style.display=step>=o.min?'':'none');$('info9b').innerHTML=info[step];$('b9n').textContent=step>=5?'已完成 ✔':'下一步 ▶';}
+  $('b9n').onclick=()=>{if(step<5){step++;render();}};
+  $('b9r').onclick=()=>{step=0;render();};
+  render();
+})();
+</script>
+</body>
+</html>

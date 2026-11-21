@@ -1,0 +1,423 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<script type="application/json" id="doc-meta">
+{
+  "title": "图乘法理解",
+  "course": "structural-mechanics",
+  "chapter": "ch02-force-method",
+  "tags": [
+    "图乘法",
+    "面积",
+    "形心"
+  ],
+  "prerequisites": [],
+  "related": [
+    "structural-mechanics/force-method-multiplication-lesson"
+  ],
+  "source": "待补充",
+  "review": {
+    "status": "unreviewed",
+    "by": "",
+    "date": ""
+  },
+  "created": "2026-11-21"
+}
+</script>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>图乘法：从小长方形到面积乘纵坐标</title>
+<style>
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  padding: 20px;
+  background: #f3f6fb;
+  color: #25334a;
+  font-family: "Microsoft YaHei", sans-serif;
+}
+.container { max-width: 950px; margin: auto; }
+h1 { text-align: center; font-size: 27px; }
+.subtitle { text-align: center; color: #64748b; }
+.card {
+  background: white;
+  padding: 20px;
+  border-radius: 14px;
+  margin: 16px 0;
+  box-shadow: 0 3px 12px #0000000c;
+}
+h2 { font-size: 19px; margin-top: 0; }
+canvas {
+  width: 100%;
+  height: auto;
+  display: block;
+  background: #fbfcff;
+  border-radius: 10px;
+}
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 15px;
+}
+button {
+  border: 0;
+  border-radius: 8px;
+  padding: 11px 19px;
+  background: #2563eb;
+  color: white;
+  font-size: 15px;
+  cursor: pointer;
+}
+button.secondary { background: #64748b; }
+button:disabled { opacity: .4; cursor: not-allowed; }
+input { width: 100%; margin-top: 15px; }
+.info {
+  background: #eff6ff;
+  padding: 14px;
+  border-radius: 10px;
+  line-height: 1.9;
+  margin-top: 12px;
+}
+.formula {
+  font-size: 21px;
+  text-align: center;
+  padding: 16px;
+  background: #f8fafc;
+  border-radius: 10px;
+  margin-top: 12px;
+}
+.highlight { color: #2563eb; font-weight: bold; }
+.green { color: #059669; font-weight: bold; }
+.step { min-height: 55px; line-height: 1.8; }
+.small { color: #64748b; font-size: 13px; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<h1>图乘法到底是怎么起作用的？</h1>
+<p class="subtitle">从无数个小长方形，到一次简单乘法</p>
+
+<div class="card">
+  <h2>第一步：认识两张图</h2>
+  <p>假设我们有两张弯矩图：</p>
+  <ul>
+    <li><span style="color:#2563eb">蓝色 Mp 图：</span>一个三角形，面积为 54。</li>
+    <li><span style="color:#e58a20">橙色 M1 图：</span>一条直线，在左端高度为 6，右端高度为 3。</li>
+  </ul>
+  <canvas id="diagram" width="850" height="350"></canvas>
+  <div class="info">
+    蓝色三角形的形心距离左端 1m。<br>
+    在这个位置，橙色图的高度是 5。
+  </div>
+</div>
+
+<div class="card">
+  <h2>第二步：把图切成很多小条</h2>
+  <p>每一个小条，都有自己的面积；同时，它所在位置的另一张图也有一个高度。</p>
+  <canvas id="strips" width="850" height="350"></canvas>
+  <div class="step" id="stepText">
+    点击播放，观察小条如何逐渐累加。
+  </div>
+  <div class="controls">
+    <button id="play">▶ 播放动画</button>
+    <button class="secondary" id="pause">暂停</button>
+    <button class="secondary" id="reset">重新开始</button>
+  </div>
+  <input type="range" id="progress" min="0" max="100" value="0">
+  <p class="small">也可以拖动进度条，自己观察每一个阶段。</p>
+</div>
+
+<div class="card">
+  <h2>第三步：为什么可以用形心代替？</h2>
+  <canvas id="centroid" width="850" height="320"></canvas>
+  <div class="info" id="centroidText">
+    蓝色三角形的面积是 54，形心在 x=1m。
+  </div>
+</div>
+
+<div class="card">
+  <h2>第四步：最终的图乘计算</h2>
+  <div class="formula">
+    图乘结果 = 面积 × 形心处的纵坐标
+  </div>
+  <div class="formula">
+    <span class="highlight">54</span> ×
+    <span class="green">5</span> =
+    <strong>270</strong>
+  </div>
+  <div class="info">
+    原来我们需要把许多小条的贡献全部相加。<br>
+    现在只需要：<br>
+    ① 求蓝色图的面积；<br>
+    ② 找蓝色图的形心；<br>
+    ③ 去橙色图上读取这个位置的高度。<br>
+    <strong>这就是图乘法！</strong>
+  </div>
+</div>
+
+<div class="card">
+  <h2>第五步：什么时候不能直接图乘？</h2>
+  <p>看另一张图在所选面积范围内是不是一条直线。</p>
+  <div class="info">
+    <span class="green">✓ 可以：</span>另一张图在整个所选面积范围内线性变化。<br>
+    <span style="color:#dc2626;font-weight:bold">✗ 不能直接整体算：</span>另一张图中途出现折点、改变斜率。<br>
+    <br>
+    遇到折点怎么办？<strong>沿折点把图分成几段，分别计算，再相加。</strong>
+  </div>
+</div>
+
+</div>
+
+<script>
+const blue = "#2563eb";
+const orange = "#e58a20";
+const green = "#059669";
+
+function setup(id) {
+  const canvas = document.getElementById(id);
+  return { canvas, ctx: canvas.getContext("2d") };
+}
+
+function axes(ctx, x0, y0, x1, y1) {
+  ctx.strokeStyle = "#64748b";
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.moveTo(x0,y0);
+  ctx.lineTo(x1,y0);
+  ctx.moveTo(x0,y0);
+  ctx.lineTo(x0,y1);
+  ctx.stroke();
+}
+
+function drawMain() {
+  const {ctx} = setup("diagram");
+  ctx.clearRect(0,0,850,350);
+  axes(ctx,80,280,790,30);
+
+  const X = x => 100 + x*180;
+  const Y = y => 280-y*9;
+
+  ctx.fillStyle = "#dbeafe";
+  ctx.beginPath();
+  ctx.moveTo(X(0),Y(6));
+  ctx.lineTo(X(3),Y(0));
+  ctx.lineTo(X(0),Y(0));
+  ctx.fill();
+
+  ctx.strokeStyle = blue;
+  ctx.lineWidth = 4;
+  ctx.beginPath();
+  ctx.moveTo(X(0),Y(6));
+  ctx.lineTo(X(3),Y(0));
+  ctx.stroke();
+
+  ctx.strokeStyle = orange;
+  ctx.lineWidth = 4;
+  ctx.beginPath();
+  ctx.moveTo(X(0),Y(6));
+  ctx.lineTo(X(3),Y(3));
+  ctx.stroke();
+
+  ctx.fillStyle = blue;
+  ctx.font = "17px Microsoft YaHei";
+  ctx.fillText("Mp 图",120,140);
+
+  ctx.fillStyle = orange;
+  ctx.fillText("M1 图",500,205);
+
+  ctx.fillStyle = "#334155";
+  ctx.font = "15px Microsoft YaHei";
+  ctx.fillText("A",90,302);
+  ctx.fillText("C",630,302);
+  ctx.fillText("x (m)",770,302);
+
+  // centroid
+  ctx.strokeStyle = green;
+  ctx.setLineDash([6,5]);
+  ctx.beginPath();
+  ctx.moveTo(X(1),Y(0));
+  ctx.lineTo(X(1),Y(5));
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  ctx.fillStyle = green;
+  ctx.fillText("形心 x=1m",X(1)+8,Y(0)+25);
+  ctx.fillText("M1=5",X(1)+8,Y(5)-10);
+}
+
+let progress = 0;
+let timer = null;
+
+function drawStrips() {
+  const {ctx} = setup("strips");
+  ctx.clearRect(0,0,850,350);
+  axes(ctx,80,285,790,30);
+
+  const X = x => 110+x*190;
+  const Y = y => 285-y*10;
+  const count = Math.floor(progress*30);
+
+  // Base triangular diagram
+  ctx.fillStyle = "#eff6ff";
+  ctx.beginPath();
+  ctx.moveTo(X(0),Y(6));
+  ctx.lineTo(X(3),Y(0));
+  ctx.lineTo(X(0),Y(0));
+  ctx.fill();
+
+  ctx.strokeStyle = blue;
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(X(0),Y(6));
+  ctx.lineTo(X(3),Y(0));
+  ctx.stroke();
+
+  // The other linear diagram
+  ctx.strokeStyle = orange;
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(X(0),Y(6));
+  ctx.lineTo(X(3),Y(3));
+  ctx.stroke();
+
+  // Animated narrow strips
+  for(let i=0;i<count;i++) {
+    const x = i*3/30;
+    const dx = 3/30;
+    const h = 6-2*x;
+    const g = 6-x;
+
+    ctx.fillStyle = "rgba(37,99,235,0.18)";
+    ctx.fillRect(X(x),Y(h),X(dx)-X(0),Y(0)-Y(h));
+
+    ctx.strokeStyle = "rgba(37,99,235,0.5)";
+    ctx.lineWidth = 1;
+    ctx.strokeRect(X(x),Y(h),X(dx)-X(0),Y(0)-Y(h));
+
+    // Small contribution marker
+    ctx.fillStyle = orange;
+    ctx.beginPath();
+    ctx.arc(X(x+dx/2),Y(g),3,0,Math.PI*2);
+    ctx.fill();
+  }
+
+  ctx.fillStyle = "#334155";
+  ctx.font = "15px Microsoft YaHei";
+  ctx.fillText("A",100,310);
+  ctx.fillText("C",670,310);
+
+  const text = document.getElementById("stepText");
+  if(progress < 0.1) {
+    text.innerHTML = "每一个小条，都有自己的面积。";
+  } else if(progress < 0.5) {
+    text.innerHTML = "蓝色小条逐渐累加；每个小条还要乘以对应位置橙色图的高度。";
+  } else if(progress < 1) {
+    text.innerHTML = "所有小条的贡献不断相加，这就是两个图相乘后积分的过程。";
+  } else {
+    text.innerHTML = "<strong>所有小条都累加完成！</strong> 接下来可以用面积和形心来简化计算。";
+  }
+}
+
+function drawCentroid() {
+  const {ctx} = setup("centroid");
+  ctx.clearRect(0,0,850,320);
+  axes(ctx,80,260,790,20);
+
+  const X = x => 110+x*190;
+  const Y = y => 260-y*23;
+
+  ctx.fillStyle = "#dbeafe";
+  ctx.beginPath();
+  ctx.moveTo(X(0),Y(6));
+  ctx.lineTo(X(3),Y(0));
+  ctx.lineTo(X(0),Y(0));
+  ctx.fill();
+
+  ctx.strokeStyle = blue;
+  ctx.lineWidth = 4;
+  ctx.beginPath();
+  ctx.moveTo(X(0),Y(6));
+  ctx.lineTo(X(3),Y(0));
+  ctx.stroke();
+
+  // centroid x=1
+  ctx.strokeStyle = green;
+  ctx.setLineDash([7,5]);
+  ctx.beginPath();
+  ctx.moveTo(X(1),Y(0));
+  ctx.lineTo(X(1),Y(5));
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // other linear diagram
+  ctx.strokeStyle = orange;
+  ctx.lineWidth = 4;
+  ctx.beginPath();
+  ctx.moveTo(X(0),Y(6));
+  ctx.lineTo(X(3),Y(3));
+  ctx.stroke();
+
+  // centroid ordinate
+  ctx.strokeStyle = green;
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(X(1),Y(5));
+  ctx.lineTo(X(1),Y(0));
+  ctx.stroke();
+
+  ctx.fillStyle = green;
+  ctx.font = "18px Microsoft YaHei";
+  ctx.fillText("形心 x=1m",X(1)+12,Y(0)+24);
+  ctx.fillText("纵坐标=5",X(1)+12,Y(5)-10);
+
+  ctx.fillStyle = "#334155";
+  ctx.font = "15px Microsoft YaHei";
+  ctx.fillText("三角形面积 = 54",520,90);
+}
+
+function update() {
+  document.getElementById("progress").value = progress*100;
+  drawStrips();
+  if(progress >= 1) stop();
+}
+
+function stop() {
+  if(timer) clearInterval(timer);
+  timer = null;
+  document.getElementById("play").textContent = "▶ 继续播放";
+}
+
+document.getElementById("play").onclick = () => {
+  if(timer) return;
+  if(progress >= 1) progress = 0;
+  document.getElementById("play").textContent = "播放中...";
+  timer = setInterval(() => {
+    progress = Math.min(1,progress+0.012);
+    update();
+  },40);
+};
+
+document.getElementById("pause").onclick = stop;
+
+document.getElementById("reset").onclick = () => {
+  stop();
+  progress = 0;
+  update();
+};
+
+document.getElementById("progress").oninput = e => {
+  stop();
+  progress = Number(e.target.value)/100;
+  update();
+};
+
+drawMain();
+drawStrips();
+drawCentroid();
+</script>
+</body>
+</html>

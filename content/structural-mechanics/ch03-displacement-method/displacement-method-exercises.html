@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<script type="application/json" id="doc-meta">
+{
+  "title": "位移法习题",
+  "course": "structural-mechanics",
+  "chapter": "ch03-displacement-method",
+  "tags": [
+    "位移法",
+    "刚架",
+    "习题"
+  ],
+  "prerequisites": [
+    "structural-mechanics/frame-displacement-method-from-zero"
+  ],
+  "related": [],
+  "source": "待补充",
+  "review": {
+    "status": "unreviewed",
+    "by": "",
+    "date": ""
+  },
+  "created": "2026-11-21"
+}
+</script>
+
+<meta charset="UTF-8">
+<title>刚架 M 图、Q 图（位移法）</title>
+<style>
+  body{font-family:"Microsoft YaHei",sans-serif;margin:20px;background:#fafafa;color:#222}
+  h2{margin:16px 0 4px}
+  svg{background:#fff;border:1px solid #ccc;display:block;max-width:100%}
+  .note{font-size:13px;color:#555;margin:6px 0}
+</style>
+</head>
+<body>
+<h1>平面刚架内力图（位移法）</h1>
+<p class="note">假设 D 端为导向支座（限制转角和竖向位移，水平可滑动）。iθB = 2，各杆端弯矩单位 kN·m，剪力单位 kN。</p>
+
+<h2>M 图（kN·m，画在受拉侧）</h2>
+<svg id="m" viewBox="0 0 600 400" width="600" height="400"></svg>
+
+<h2>Q 图（kN，上为正）</h2>
+<svg id="q" viewBox="0 0 600 400" width="600" height="400"></svg>
+
+<script>
+const NS="http://www.w3.org/2000/svg";
+const xA=80, xB=280, xC=480, yb=140, yD=340, k=50; // 1m = 50px
+
+function el(svg,tag,attrs,text){
+  const e=document.createElementNS(NS,tag);
+  for(const a in attrs) e.setAttribute(a,attrs[a]);
+  if(text!==undefined) e.textContent=text;
+  svg.appendChild(e); return e;
+}
+function frame(svg){
+  el(svg,"line",{x1:xA,y1:yb,x2:xC,y2:yb,stroke:"#444","stroke-width":3});
+  el(svg,"line",{x1:xB,y1:yb,x2:xB,y2:yD,stroke:"#444","stroke-width":3});
+  el(svg,"text",{x:xA-14,y:yb-8,"font-size":14},"A");
+  el(svg,"text",{x:xB+6,y:yb-8,"font-size":14},"B");
+  el(svg,"text",{x:xC+6,y:yb-8,"font-size":14},"C");
+  el(svg,"text",{x:xB+8,y:yD+4,"font-size":14},"D");
+  // 支座示意
+  el(svg,"rect",{x:xA-8,y:yb-20,width:8,height:40,fill:"#999"});       // A 固定
+  el(svg,"circle",{cx:xC,cy:yb+8,r:7,fill:"none",stroke:"#444"});       // C 滚动
+  el(svg,"line",{x1:xC-14,y1:yb+15,x2:xC+14,y2:yb+15,stroke:"#444"});
+  el(svg,"line",{x1:xB-14,y1:yD,x2:xB+14,y2:yD,stroke:"#444","stroke-width":3}); // D 导向
+}
+function loads(svg){
+  // AB 均布荷载
+  for(let i=0;i<=8;i++){
+    const x=xA+i*25;
+    el(svg,"line",{x1:x,y1:yb-70,x2:x,y2:yb-52,stroke:"#c33"});
+    el(svg,"path",{d:`M${x-3},${yb-57} L${x},${yb-51} L${x+3},${yb-57}`,fill:"none",stroke:"#c33"});
+  }
+  el(svg,"line",{x1:xA,y1:yb-70,x2:xB,y2:yb-70,stroke:"#c33"});
+  el(svg,"text",{x:xA+60,y:yb-76,"font-size":12,fill:"#c33"},"q=15 kN/m");
+  // P
+  el(svg,"line",{x1:xB+100,y1:yb-60,x2:xB+100,y2:yb-4,stroke:"#c33","stroke-width":2});
+  el(svg,"path",{d:`M${xB+95},${yb-12} L${xB+100},${yb-3} L${xB+105},${yb-12}`,fill:"none",stroke:"#c33","stroke-width":2});
+  el(svg,"text",{x:xB+106,y:yb-45,"font-size":12,fill:"#c33"},"P=48 kN");
+}
+function poly(svg,pts,color){
+  el(svg,"polygon",{points:pts.map(p=>p.join(",")).join(" "),fill:color,"fill-opacity":0.25,stroke:color,"stroke-width":2});
+}
+function lab(svg,x,y,t,c){el(svg,"text",{x,y,"font-size":13,fill:c||"#000","font-weight":"bold"},t);}
+
+/* ---------- M 图：y = yb + M*s，M 为下侧受拉为正（向下画） ---------- */
+(function(){
+  const svg=document.getElementById("m"); frame(svg); loads(svg);
+  const s=1.5, col="#1a5fb4";
+  // AB
+  const ab=[];
+  for(let i=0;i<=40;i++){const x=i/10; const M=-16+27*x-7.5*x*x; ab.push([xA+x*k,yb+M*s]);}
+  poly(svg,[[xA,yb],...ab,[xB,yb]],col);
+  // BC
+  const bc=[[xB,yb-30*s],[xB+2*k,yb+33*s],[xC,yb]];
+  poly(svg,[[xB,yb],...bc,[xC,yb]],col);
+  // BD（左侧受拉，常数 2）
+  poly(svg,[[xB,yb],[xB-2*s,yb],[xB-2*s,yD],[xB,yD]],col);
+
+  lab(svg,xA-6,yb-16*s-6,"16",col);
+  lab(svg,xB-28,yb-28*s-6,"28",col);
+  lab(svg,xA+1.8*k-12,yb+8.3*s+16,"8.3",col);
+  lab(svg,xB+8,yb-30*s-6,"30",col);
+  lab(svg,xB+2*k-8,yb+33*s+16,"33",col);
+  lab(svg,xB-32,(yb+yD)/2,"2",col);
+  lab(svg,xC-4,yb+22,"0",col);
+})();
+
+/* ---------- Q 图：y = yb - Q*s，上为正 ---------- */
+(function(){
+  const svg=document.getElementById("q"); frame(svg); loads(svg);
+  const s=1.2, col="#b5311a";
+  // AB：Q=27-15x
+  poly(svg,[[xA,yb],[xA,yb-27*s],[xB,yb+33*s],[xB,yb]],col);
+  // BC
+  poly(svg,[[xB,yb],[xB,yb-31.5*s],[xB+2*k,yb-31.5*s],[xB+2*k,yb+16.5*s],[xC,yb+16.5*s],[xC,yb]],col);
+  // 零点 x=1.8m
+  el(svg,"circle",{cx:xA+1.8*k,cy:yb,r:3,fill:col});
+  lab(svg,xA+1.8*k-14,yb-8,"x=1.8m",col);
+
+  lab(svg,xA-4,yb-27*s-6,"+27",col);
+  lab(svg,xB-38,yb+33*s+14,"-33",col);
+  lab(svg,xB+8,yb-31.5*s-6,"+31.5",col);
+  lab(svg,xB+2*k+8,yb+16.5*s+14,"-16.5",col);
+  lab(svg,xB+8,(yb+yD)/2,"BD 杆 Q = 0",col);
+})();
+</script>
+</body>
+</html>

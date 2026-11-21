@@ -1,0 +1,7 @@
+{
+  "name": "工具教程",
+  "textbook": "不适用",
+  "chapters": [
+    { "id": "ch01-latex-basics", "title": "LaTeX 公式入门" }
+  ]
+}

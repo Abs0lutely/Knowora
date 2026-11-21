@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<script type="application/json" id="doc-meta">
+{
+  "title": "力法图乘法互动教学",
+  "course": "structural-mechanics",
+  "chapter": "ch02-force-method",
+  "tags": [
+    "力法",
+    "图乘法",
+    "互动教学"
+  ],
+  "prerequisites": [],
+  "related": [
+    "structural-mechanics/graph-multiplication-intuition"
+  ],
+  "source": "待补充",
+  "review": {
+    "status": "unreviewed",
+    "by": "",
+    "date": ""
+  },
+  "created": "2026-11-21"
+}
+</script>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>力法中的图乘法｜一步一步学会</title>
+<style>
+:root{--ink:#182235;--muted:#607086;--blue:#2463eb;--cyan:#0e9f9a;--orange:#e87925;--red:#d9485f;--paper:#f4f7fb;--line:#dce4ef}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.65 "Microsoft YaHei",system-ui,sans-serif}
+header{padding:34px 20px 28px;background:linear-gradient(125deg,#14233d,#214d7d);color:white}
+.wrap{max-width:1080px;margin:auto;padding:0 18px}h1{font-size:clamp(26px,4vw,40px);line-height:1.2;margin:0 0 12px}header p{color:#d9e7f8;margin:0;max-width:760px}
+main{padding:24px 0 60px}.card{background:white;border:1px solid var(--line);border-radius:16px;padding:22px;margin:16px 0;box-shadow:0 5px 18px #233b5b0b}
+h2{font-size:22px;margin:0 0 12px}h3{font-size:18px;margin:18px 0 8px}.muted{color:var(--muted)}.tag{display:inline-block;background:#eaf1ff;color:#1f56c5;border-radius:99px;padding:3px 10px;font-size:13px;font-weight:700}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.formula{background:#f2f6fc;border-left:4px solid var(--blue);padding:12px 16px;border-radius:8px;font-family:Cambria,serif;font-size:19px;overflow-wrap:anywhere}
+.note{background:#fff8e9;border-left:4px solid #e6a23c;padding:12px 15px;border-radius:8px}.good{background:#eaf8f5;border-left:4px solid var(--cyan);padding:12px 15px;border-radius:8px}
+svg{width:100%;height:auto;display:block;background:#fbfcfe;border:1px solid #e6edf5;border-radius:12px}
+.controls{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0}.controls button{border:0;border-radius:9px;padding:10px 15px;background:#e9eff8;color:#1d3557;font-weight:700;cursor:pointer}.controls button.active{background:var(--blue);color:white}.controls button:hover{filter:brightness(.97)}
+.step{display:none}.step.show{display:block}.stepnum{color:var(--blue);font-weight:800}.small{font-size:14px;color:var(--muted)}
+table{border-collapse:collapse;width:100%;margin:10px 0}td,th{border-bottom:1px solid var(--line);padding:9px;text-align:left}th{background:#f5f8fc}
+.pulse{animation:pulse 1.8s infinite}@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+.bar{height:9px;border-radius:9px;background:#e8eef7;overflow:hidden}.bar span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--cyan));transition:width .5s}
+.quiz button{margin:5px}.answer{display:none;padding:10px;background:#eef8f5;border-radius:8px;margin-top:8px}.answer.show{display:block}
+@media(max-width:720px){.grid{grid-template-columns:1fr}.card{padding:17px}.wrap{padding:0 13px}}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <span class="tag">结构力学 · 可交互教学</span>
+  <h1>力法中的图乘法</h1>
+  <p>用一个“固定端—中间受力—右端竖向支承”的简支承悬臂梁例子，带你从力法方程走到图乘法。重点看懂：为什么是“一个图的面积 × 另一个图在形心处的纵坐标”。</p>
+</div></header>
+<main class="wrap">
+<section class="card">
+<h2>先看例题：这根梁发生了什么？</h2>
+<p>梁长 <b>L = 6 m</b>，A 端固定，B 端有竖向支承；距 A 点 <b>a = 3 m</b> 处受向下集中力 <b>P = 12 kN</b>。全梁 EI 为常数。</p>
+<div class="grid">
+<div>
+<svg viewBox="0 0 620 220" role="img" aria-label="结构示意图">
+ <defs><marker id="arr" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8Z" fill="#d9485f"/></marker></defs>
+ <rect x="48" y="62" width="12" height="104" fill="#64748b"/><path d="M60 62l-18 12m18 0L42 86m18 0L42 98m18 0L42 110m18 0L42 122m18 0L42 134m18 0L42 146" stroke="#64748b" stroke-width="2"/>
+ <line x1="60" y1="112" x2="540" y2="112" stroke="#182235" stroke-width="5"/>
+ <line x1="300" y1="35" x2="300" y2="92" stroke="#d9485f" stroke-width="3" marker-end="url(#arr)"/>
+ <text x="314" y="46" fill="#d9485f" font-size="17" font-weight="bold">P = 12 kN</text>
+ <path d="M540 117l-16 20h32z" fill="#64748b"/><line x1="512" y1="140" x2="568" y2="140" stroke="#64748b" stroke-width="2"/>
+ <text x="48" y="185" font-size="16" fill="#182235">A 固定端</text><text x="523" y="185" font-size="16" fill="#182235">B</text>
+ <text x="170" y="205" font-size="15" fill="#607086">3 m</text><text x="410" y="205" font-size="15" fill="#607086">3 m</text>
+ <line x1="60" y1="153" x2="300" y2="153" stroke="#607086"/><line x1="300" y1="153" x2="540" y2="153" stroke="#607086"/>
+ <line x1="60" y1="148" x2="60" y2="158" stroke="#607086"/><line x1="300" y1="148" x2="300" y2="158" stroke="#607086"/><line x1="540" y1="148" x2="540" y2="158" stroke="#607086"/>
+ <text x="260" y="18" font-size="14" fill="#607086">EI = 常数</text>
+</svg>
+</div>
+<div>
+<div class="note"><b>为什么要用力法？</b><br>这根梁有一个多余约束（B 点竖向支承反力），属于一次超静定结构。力法的做法是：暂时拆掉 B 点支承，把它的反力当作未知力 X₁。</div>
+<p><b>本题目标：</b>求出 X₁，并学会用图乘法计算两个弯矩图的乘积积分。</p>
+</div></div>
+</section>
+
+<section class="card">
+<h2>第 1 步｜选取基本结构，列力法方程</h2>
+<p>拆掉 B 点竖向支承，得到 A 端固定、B 端自由的悬臂梁。未知冗余力 X₁ 取<strong>向上</strong>为正。</p>
+<div class="formula">Δ₁P + δ₁₁ X₁ = 0</div>
+<ul>
+<li>Δ₁P：只有原荷载 P 作用时，B 点沿 X₁ 方向的位移。</li>
+<li>δ₁₁：在 B 点施加单位力（向上）时，B 点沿单位力方向的位移。</li>
+<li>兼容条件：真实结构 B 点有支承，所以竖向位移必须为 0。</li>
+</ul>
+<div class="good">核心思想：真实结构 = 基本结构 + 冗余力 X₁ 的作用；两者叠加后，B 点位移恰好为零。</div>
+</section>
+
+<section class="card">
+<h2>第 2 步｜先画两个弯矩图 Mₚ 和 m₁</h2>
+<p><b>Mₚ：</b>基本结构只受原荷载 P。<b>m₁：</b>基本结构在 B 点受一个向上的单位力 1。</p>
+<div class="grid">
+<div>
+<h3>原荷载弯矩图 Mₚ</h3>
+<svg viewBox="0 0 500 250">
+ <line x1="48" y1="55" x2="452" y2="55" stroke="#182235" stroke-width="3"/>
+ <rect x="42" y="45" width="8" height="20" fill="#64748b"/>
+ <path d="M48 55 L250 178 L250 55 Z" fill="#f7c8cf" stroke="#d9485f" stroke-width="2"/>
+ <line x1="250" y1="55" x2="452" y2="55" stroke="#182235" stroke-width="1.5"/>
+ <text x="52" y="198" fill="#d9485f" font-size="16" font-weight="bold">最大负弯矩 −Pa = −36 kN·m</text>
+ <text x="45" y="35" font-size="14">A</text><text x="244" y="35" font-size="14">荷载点</text><text x="445" y="35" font-size="14">B</text>
+ <text x="135" y="220" font-size="14" fill="#607086">三角形底长 3 m</text>
+ <text x="268" y="82" font-size="14" fill="#607086">弯矩为 0</text>
+</svg>
+<p class="small">在 A 到荷载点之间，弯矩从 −36 线性变化到 0；荷载点右侧弯矩为 0。</p>
+</div>
+<div>
+<h3>单位力弯矩图 m₁</h3>
+<svg viewBox="0 0 500 250">
+ <line x1="48" y1="55" x2="452" y2="55" stroke="#182235" stroke-width="3"/>
+ <rect x="42" y="45" width="8" height="20" fill="#64748b"/>
+ <path d="M48 55 L452 190 L452 55 Z" fill="#c8e9e6" stroke="#0e9f9a" stroke-width="2"/>
+ <text x="52" y="212" fill="#0e827e" font-size="16" font-weight="bold">A 端 6 m；B 端 0</text>
+ <text x="45" y="35" font-size="14">A</text><text x="445" y="35" font-size="14">B</text>
+ <text x="220" y="230" font-size="14" fill="#607086">单位力图：全长三角形</text>
+</svg>
+<p class="small">单位力向上，m₁ 在 A 端最大（6），到 B 端线性减为 0。此处采用与 X₁ 一致的正方向。</p>
+</div>
+</div>
+<div class="note">注意符号：按本例约定，Mₚ 为负、m₁ 为正，因此 ∫Mₚm₁/EI dx 为负。不要只看图形面积大小而忘记正负号。</div>
+</section>
+
+<section class="card">
+<h2>第 3 步｜图乘法到底怎么乘？</h2>
+<p>力法中需要计算：</p>
+<div class="formula">Δ₁P = ∫₀ᴸ (Mₚ · m₁)/(EI) dx　　δ₁₁ = ∫₀ᴸ (m₁ · m₁)/(EI) dx</div>
+<p>若 EI 为常数，可以先算图形乘积积分，再整体除以 EI。图乘法的关键规则：</p>
+<div class="good"><b>图乘法：</b>一个弯矩图的面积 Ω，乘以另一个弯矩图在 Ω 的形心位置处的纵坐标 ȳ。</div>
+<div class="grid">
+<div>
+<h3>① 计算 ∫Mₚm₁ dx</h3>
+<p>Mₚ 三角形只在 A 到荷载点（3 m）有面积。</p>
+<div class="formula">Ωₚ = ½ × 3 × 36 = 54 kN·m²</div>
+<p>这个三角形的形心：从大端 A 起，距离底边的 1/3，即 x̄ = 3/3 = 1 m。</p>
+<div class="formula">m₁(x̄) = 6 − 1 = 5 m</div>
+<div class="formula">∫Mₚm₁ dx = −Ωₚ × 5 = −270 kN·m³</div>
+</div>
+<div>
+<h3>② 计算 ∫m₁² dx</h3>
+<p>m₁ 是全长 6 m 的三角形，面积：</p>
+<div class="formula">Ω₁ = ½ × 6 × 6 = 18 m²</div>
+<p>形心距 A 点 6/3 = 2 m。m₁ 在该处纵坐标：</p>
+<div class="formula">m₁(x̄) = 6 − 2 = 4 m</div>
+<div class="formula">∫m₁² dx = Ω₁ × 4 = 72 m³</div>
+</div>
+</div>
+<p class="small">为什么一个图的形心位置能代表整个面积？因为另一个图是直线变化的函数。对线性函数 y(x)，面积加权平均纵坐标恰好等于形心处的纵坐标，所以积分可化成 Ω·ȳ。</p>
+</section>
+
+<section class="card">
+<h2>第 4 步｜代入力法方程，求冗余力</h2>
+<div class="formula">−270/EI + (72/EI)X₁ = 0</div>
+<div class="formula">X₁ = 270/72 = 3.75 kN（向上）</div>
+<p>这里 EI 在两项中相同，因此约掉了。也就是说，B 点支承反力为 3.75 kN 向上。</p>
+<div class="good"><b>检查：</b>竖向平衡给出 A 点竖向反力 = 12 − 3.75 = 8.25 kN（向上）。A 点还承担固定端弯矩。反力大小与方向是合理的。</div>
+</section>
+
+<section class="card">
+<h2>第 5 步｜互动：亲手移动形心，观察图乘</h2>
+<p>下面把 Mₚ 的三角形面积 Ωₚ 固定为 54。拖动形心位置 x̄，观察单位力图在该处的纵坐标如何变化，以及乘积 Ωₚ·m₁(x̄) 如何变化。</p>
+<div class="controls"><button id="reset" class="active">恢复正确形心 x̄ = 1 m</button><button id="animate">播放形心移动</button></div>
+<svg viewBox="0 0 700 285" id="interactive">
+ <line x1="70" y1="55" x2="630" y2="55" stroke="#182235" stroke-width="4"/>
+ <path d="M70 55 L350 210 L350 55 Z" fill="#f7c8cf" stroke="#d9485f" stroke-width="2"/>
+ <path d="M70 55 L630 210 L630 55 Z" fill="#c8e9e6" stroke="#0e9f9a" stroke-width="2" opacity=".65"/>
+ <line id="guide" x1="163" y1="0" x2="163" y2="210" stroke="#2463eb" stroke-dasharray="5 5" stroke-width="2"/>
+ <circle id="dot" cx="163" cy="80" r="7" fill="#2463eb"/>
+ <text x="70" y="35" font-size="15">A</text><text x="342" y="35" font-size="15">荷载点</text><text x="620" y="35" font-size="15">B</text>
+ <text x="380" y="245" font-size="14" fill="#607086">红色：Mₚ（三角形仅到 x=3 m）</text>
+ <text x="380" y="265" font-size="14" fill="#0e827e">绿色：m₁（全长 6 m）</text>
+ <text id="xtext" x="170" y="28" font-size="14" fill="#2463eb">x̄ = 1.00 m</text>
+</svg>
+<div class="controls"><label>形心位置 x̄：<input id="xrange" type="range" min="0" max="3" step=".05" value="1"></label><span id="xval">1.00 m</span></div>
+<div class="grid">
+<div><div class="small">m₁ 在形心处的纵坐标</div><h2 id="ordinate">5.00 m</h2></div>
+<div><div class="small">带符号的图乘结果 Ωₚ × (−m₁)</div><h2 id="product">−270.0 kN·m³</h2></div>
+</div>
+<div class="bar"><span id="progress" style="width:83.33%"></span></div>
+<p class="small">拖动时，乘积数值会变化；真实计算时，形心位置不是随意选的，而是由 Mₚ 三角形的几何形心决定，必须取 x̄ = 1 m。</p>
+</section>
+
+<section class="card">
+<h2>最后：你需要记住的 4 件事</h2>
+<ol>
+<li>先根据力法方程，明确要算哪两个积分：Δ₁P 和 δ₁₁。</li>
+<li>分别画出 Mₚ 与 m₁，标清正负号、尺寸和关键纵坐标。</li>
+<li>选一个图求面积 Ω，找它的形心；再读另一个图在形心处的纵坐标 ȳ。</li>
+<li>图乘结果 = Ω·ȳ，再代入力法方程求未知冗余力。</li>
+</ol>
+<div class="note"><b>最容易犯的错：</b>把形心取错图。口诀是“谁求面积，就找谁的形心；另一个图，在这个形心处读纵坐标”。两图都为直线图形时，通常可以任选一个求面积，但要确保所选区域和另一个图的表达范围匹配。</div>
+</section>
+
+<section class="card quiz">
+<h2>小测一下：确认你真的会了</h2>
+<p><b>本例中，为什么计算 ∫Mₚm₁ dx 时，形心位置是 x = 1 m？</b></p>
+<button onclick="showAnswer('a')">A. 因为荷载作用在 x=3 m</button>
+<button onclick="showAnswer('b')">B. 因为 Mₚ 三角形形心距大端 A 为底长的 1/3</button>
+<button onclick="showAnswer('c')">C. 因为单位力作用在 B 点</button>
+<div id="qa" class="answer">正确答案：B。Mₚ 三角形底长为 3 m，形心距大端 A 为 3/3 = 1 m。然后在 m₁ 图上读取 x=1 m 处的纵坐标 5 m。</div>
+</section>
+<footer class="small" style="text-align:center;padding:15px">教学示例｜采用 EI 为常数、线弹性小变形假定。弯矩正负号约定可能因教材不同而异，但只要全程一致，最终物理结果不变。</footer>
+</main>
+<script>
+const range=document.getElementById('xrange'), dot=document.getElementById('dot'), guide=document.getElementById('guide');
+const xval=document.getElementById('xval'), ordinate=document.getElementById('ordinate'), product=document.getElementById('product'), progress=document.getElementById('progress'), xtext=document.getElementById('xtext');
+function update(){
+ const x=+range.value, px=70+x*(280/3), y=55+(155/6)*x, m=6-x, v=-54*m;
+ dot.setAttribute('cx',px); dot.setAttribute('cy',y); guide.setAttribute('x1',px); guide.setAttribute('x2',px);
+ xval.textContent=x.toFixed(2)+' m'; xtext.setAttribute('x',Math.min(px+10,520)); xtext.textContent='x̄ = '+x.toFixed(2)+' m';
+ ordinate.textContent=m.toFixed(2)+' m'; product.textContent='−'+Math.abs(v).toFixed(1)+' kN·m³'; progress.style.width=(m/6*100)+'%';
+}
+range.addEventListener('input',update); update();
+document.getElementById('reset').onclick=()=>{range.value=1;update()};
+let timer=null, direction=1;
+document.getElementById('animate').onclick=()=>{
+ if(timer){clearInterval(timer);timer=null;document.getElementById('animate').textContent='播放形心移动';return}
+ document.getElementById('animate').textContent='暂停动画';
+ timer=setInterval(()=>{let x=+range.value+.05*direction;if(x>=3){x=3;direction=-1}else if(x<=0){x=0;direction=1}range.value=x;update()},70)
+};
+function showAnswer(id){document.getElementById('qa').classList.add('show')}
+</script>
+</body></html>

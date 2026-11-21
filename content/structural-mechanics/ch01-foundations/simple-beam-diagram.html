@@ -1,0 +1,959 @@
+<!doctype html><html><head>
+<script type="application/json" id="doc-meta">
+{
+  "title": "简支梁内力图",
+  "course": "structural-mechanics",
+  "chapter": "ch01-foundations",
+  "tags": [
+    "简支梁",
+    "剪力图",
+    "弯矩图"
+  ],
+  "prerequisites": [],
+  "related": [],
+  "source": "待补充",
+  "review": {
+    "status": "unreviewed",
+    "by": "",
+    "date": ""
+  },
+  "created": "2026-11-21"
+}
+</script>
+<meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>简支梁内力图</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Noto+Sans+SC:wght@400;500;700&display=swap">
+<style>
+/* 版面：绘图纸风格。一列正文 + 绘图区（宽屏时左图右解），数值用等宽字体，V 图蓝、M 图橙，反力红 */
+:root{
+  --bg:#F1F4F3; --surface:#FFFFFF; --ink:#16282C; --ink-2:#4A5E62; --line:#D0DAD8; --grid:#E3EAE8;
+  --accent:#0F766E; --accent-ink:#FFFFFF; --soft:#E5F1EF;
+  --react:#C0392B; --v:#2563C9; --m:#C2410C; --warn:#9A6700; --ok:#1A7F37;
+  --f-sans:"Noto Sans SC","PingFang SC","Microsoft YaHei","Hiragino Sans GB",system-ui,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0E1A1D; --surface:#15252A; --ink:#E4EEEC; --ink-2:#9DB2B3; --line:#2A3E43; --grid:#1B2D32;
+  --accent:#3FB8A0; --accent-ink:#06201B; --soft:#17332F;
+  --react:#FF7A6B; --v:#7AA7FF; --m:#FF9A62; --warn:#E3B341; --ok:#56D364; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0E1A1D; --surface:#15252A; --ink:#E4EEEC; --ink-2:#9DB2B3; --line:#2A3E43; --grid:#1B2D32;
+  --accent:#3FB8A0; --accent-ink:#06201B; --soft:#17332F;
+  --react:#FF7A6B; --v:#7AA7FF; --m:#FF9A62; --warn:#E3B341; --ok:#56D364; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-sans);font-size:16px;line-height:1.75;
+  padding-block:0 4rem;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:1080px;margin-inline:auto}
+h1,h2,h3{line-height:1.3;text-wrap:balance;margin:0}
+h1{font-size:clamp(1.9rem,5vw,2.9rem);font-weight:700;letter-spacing:.02em}
+h2{font-size:1.5rem;font-weight:700;padding-top:3rem;margin-bottom:.4rem}
+h3{font-size:1.05rem;font-weight:700;margin-bottom:.4rem}
+p{margin:.5rem 0}
+.lead{color:var(--ink-2);max-width:42em}
+.mono,code,.num{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+code{background:var(--soft);padding:.05em .4em;border-radius:3px;font-size:.92em}
+header.top{padding-block:3rem 1.5rem;border-bottom:2px solid var(--ink)}
+.eyebrow{font-family:var(--f-mono);font-size:.78rem;letter-spacing:.14em;color:var(--ink-2);text-transform:uppercase;margin-bottom:.6rem}
+nav.toc{display:flex;flex-wrap:wrap;gap:.4rem .5rem;margin-top:1.2rem}
+nav.toc a{font-size:.9rem;color:var(--ink);text-decoration:none;border:1px solid var(--line);background:var(--surface);padding:.15rem .75rem;border-radius:999px}
+nav.toc a:hover{border-color:var(--accent);color:var(--accent)}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:1rem;margin-top:1rem}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:1rem 1.1rem;min-width:0}
+.panel.flat{background:transparent}
+.sign-fig{display:block;width:100%;max-width:300px;height:auto;margin:.3rem 0}
+ol.steps5{list-style:none;padding:0;margin:1rem 0 0;display:grid;gap:.6rem}
+ol.steps5 li{display:grid;grid-template-columns:2.2rem minmax(0,1fr);gap:.8rem;align-items:start}
+ol.steps5 .n{font-family:var(--f-mono);font-weight:700;background:var(--ink);color:var(--bg);width:2rem;height:2rem;display:grid;place-items:center;border-radius:50%;margin-top:.15rem}
+ol.steps5 b{display:block}
+.tbl{overflow-x:auto;margin-top:1rem;border:1px solid var(--line);border-radius:6px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:560px;font-size:.92rem;line-height:1.55}
+th,td{padding:.55rem .8rem;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:.8rem;letter-spacing:.06em;color:var(--ink-2);background:var(--soft);font-weight:700}
+tr:last-child td{border-bottom:0}
+td.num,th.num{text-align:right;white-space:nowrap}
+.pill{display:inline-block;font-family:var(--f-mono);font-size:.78rem;padding:0 .5rem;border-radius:999px;border:1px solid currentColor;line-height:1.5;white-space:nowrap}
+.pill.v{color:var(--v)}.pill.m{color:var(--m)}.pill.r{color:var(--react)}
+/* 口诀 */
+.rules{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:.8rem;margin-top:1rem}
+.rules div{border-left:3px solid var(--accent);padding:.2rem 0 .2rem .8rem}
+.rules b{display:block;font-size:.95rem}
+.rules span{color:var(--ink-2);font-size:.9rem}
+/* 工作台 */
+.bench{margin-top:1.2rem;display:grid;gap:1rem}
+.chips{display:flex;flex-wrap:wrap;gap:.45rem}
+.chip{font:inherit;font-size:.92rem;border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:.25rem .9rem;border-radius:999px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:700}
+.chip:hover{border-color:var(--accent)}
+.params{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,210px),1fr));gap:.6rem 1.4rem}
+.param label{display:flex;justify-content:space-between;gap:.5rem;font-size:.88rem;color:var(--ink-2)}
+.param output{font-family:var(--f-mono);color:var(--ink);font-weight:600}
+input[type=range]{width:100%;accent-color:var(--accent);margin:.2rem 0}
+.case-desc{color:var(--ink-2);margin:0}
+.stepper{display:flex;flex-wrap:wrap;gap:.4rem;align-items:center}
+.stepper .st{font:inherit;font-size:.88rem;border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:.2rem .8rem;border-radius:6px;cursor:pointer;display:flex;gap:.45rem;align-items:center}
+.stepper .st i{font-style:normal;font-family:var(--f-mono);font-weight:700;color:var(--ink-2)}
+.stepper .st[aria-current="step"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.stepper .st[aria-current="step"] i{color:var(--bg)}
+.stepper .st.done{border-color:var(--accent)}
+.stepper .sp{flex:1}
+.btn{font:inherit;font-size:.9rem;border:1px solid var(--accent);background:var(--accent);color:var(--accent-ink);padding:.25rem 1rem;border-radius:6px;cursor:pointer;font-weight:600}
+.btn.ghost{background:transparent;color:var(--accent)}
+.btn:disabled{opacity:.4;cursor:default}
+.viewer{display:grid;gap:1rem;grid-template-columns:minmax(0,1fr)}
+@media (min-width:980px){.viewer{grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);align-items:start}}
+.sheet{background:var(--surface);border:1px solid var(--ink);border-radius:2px;position:relative;min-width:0}
+.sheet svg{display:block;width:100%;height:auto;touch-action:pan-y}
+.readout{position:absolute;top:.5rem;right:.6rem;font-family:var(--f-mono);font-size:.78rem;background:var(--surface);border:1px solid var(--line);padding:.1rem .55rem;border-radius:4px;color:var(--ink-2);pointer-events:none}
+.readout b{color:var(--ink)}
+.explain{min-width:0}
+.explain h3{display:flex;gap:.6rem;align-items:baseline}
+.explain h3 .pill{font-weight:400}
+.explain .tbl{margin-top:.6rem}
+.explain table{min-width:430px;font-size:.84rem}
+.calc{font-family:var(--f-mono);font-size:.86rem;background:var(--soft);border-radius:4px;padding:.5rem .7rem;margin:.5rem 0;overflow-x:auto;white-space:pre;line-height:1.7}
+.note{font-size:.9rem;color:var(--ink-2)}
+.tick{color:var(--ok);font-weight:700}
+ul.tight{margin:.4rem 0;padding-left:1.2rem}
+ul.tight li{margin:.2rem 0}
+/* 实验室 */
+.loadlist{display:grid;gap:.5rem}
+.loadrow{display:flex;flex-wrap:wrap;gap:.4rem .8rem;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:.45rem .7rem}
+.loadrow .tag{font-weight:700;min-width:5.5em}
+.loadrow label{display:flex;align-items:center;gap:.35rem;font-size:.85rem;color:var(--ink-2)}
+.loadrow input[type=number]{width:5.2em;font:inherit;font-family:var(--f-mono);font-size:.88rem;padding:.1rem .35rem;border:1px solid var(--line);border-radius:4px;background:var(--bg);color:var(--ink)}
+.loadrow .del{margin-left:auto}
+.addbar{display:flex;flex-wrap:wrap;gap:.45rem;align-items:center}
+/* 测验 */
+.quiz{display:grid;gap:1rem;margin-top:1rem}
+.q{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:1rem 1.1rem}
+.q p.qt{margin:0 0 .6rem;font-weight:600}
+.q .opts{display:grid;gap:.4rem}
+.q .opt{font:inherit;text-align:left;border:1px solid var(--line);background:var(--bg);color:var(--ink);padding:.4rem .8rem;border-radius:6px;cursor:pointer}
+.q .opt:hover{border-color:var(--accent)}
+.q .opt.right{border-color:var(--ok);background:var(--soft)}
+.q .opt.wrong{border-color:var(--react)}
+.q .why{display:none;margin-top:.6rem;font-size:.92rem;color:var(--ink-2)}
+.q.done .why{display:block}
+.score{font-family:var(--f-mono);color:var(--ink-2);margin-top:.8rem}
+footer{margin-top:3rem;padding-top:1rem;border-top:1px solid var(--line);color:var(--ink-2);font-size:.85rem}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+/* SVG 图元 */
+svg text{font-family:var(--f-mono);font-size:12px;fill:var(--ink)}
+svg .t2{fill:var(--ink-2)} svg .tv{fill:var(--v)} svg .tm{fill:var(--m)} svg .tr{fill:var(--react)}
+svg .b{font-weight:700} svg .sm{font-size:11px} svg .cn{font-family:var(--f-sans);font-size:12px}
+svg .ink{stroke:var(--ink);fill:none;stroke-width:1.6;stroke-linejoin:round;stroke-linecap:round}
+svg .inkf{fill:var(--ink);stroke:none}
+svg .thin{stroke:var(--ink-2);fill:none;stroke-width:1}
+svg .gridl{stroke:var(--grid);stroke-width:1;fill:none}
+svg .guide{stroke:var(--ink-2);stroke-width:1;stroke-dasharray:4 4;opacity:.55}
+svg .base{stroke:var(--ink);stroke-width:1.2}
+svg .rx{stroke:var(--react);fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+svg .rxf{fill:var(--react);stroke:none}
+svg .vl{stroke:var(--v);fill:none;stroke-width:2.2;stroke-linejoin:round}
+svg .vf{fill:var(--v);fill-opacity:.2;stroke:none}
+svg .ml{stroke:var(--m);fill:none;stroke-width:2.2;stroke-linejoin:round}
+svg .mf{fill:var(--m);fill-opacity:.2;stroke:none}
+svg .vdot{fill:var(--v);stroke:var(--surface);stroke-width:1.5}
+svg .mdot{fill:var(--m);stroke:var(--surface);stroke-width:1.5}
+svg .cursor{stroke:var(--accent);stroke-width:1.5}
+svg .ph{fill:var(--ink-2);font-family:var(--f-sans);font-size:12px;opacity:.7}
+svg .panelhead{font-family:var(--f-sans);font-size:13px;font-weight:700}
+svg .hit{fill:transparent}
+
+</style>
+<div class="wrap">
+<header class="top">
+  <div class="eyebrow">材料力学 / 结构力学 · 内力图</div>
+  <h1>简支梁的剪力图与弯矩图</h1>
+  <p class="lead">先记住符号，再按五个步骤画图，最后拖动滑块看荷载变化时两张图怎么跟着变。页面里的每个数字都由程序按平衡条件算出，可以和你的手算对照。</p>
+  <nav class="toc" aria-label="目录">
+    <a href="#sign">符号规定</a><a href="#five">五步画图法</a><a href="#law">荷载与图形的规律</a><a href="#cases">七个典型例题</a><a href="#lab">自己组合荷载</a><a href="#quiz">自测</a>
+  </nav>
+</header>
+
+<section id="sign">
+  <h2>先约定符号</h2>
+  <p>两张图都靠符号来区分方向，画图前先统一。本页采用最常见的约定：</p>
+  <div class="grid2">
+    <div class="panel">
+      <h3>剪力 V：左上右下为正</h3>
+      <svg class="sign-fig" viewBox="0 0 300 130" role="img" aria-label="正剪力：微段左侧截面剪力向上，右侧向下，使微段顺时针转动">
+        <rect x="80" y="55" width="140" height="22" class="ink" style="fill:var(--soft)"/>
+        <path class="rx" d="M80 100 V62"/><path class="rxf" d="M80 56 l-5 11 h10z"/>
+        <path class="rx" d="M220 32 V70"/><path class="rxf" d="M220 76 l-5 -11 h10z"/>
+        <text x="62" y="112" class="tr b">V</text><text x="232" y="30" class="tr b">V</text>
+        <path class="thin" d="M130 100 a30 30 0 0 0 40 0" />
+        <text x="150" y="122" class="t2 cn" text-anchor="middle">微段顺时针转 → V 为正</text>
+      </svg>
+      <p class="note">从左往右看截面：它左边那段对它向上推，为正。画 V 图时，正值画在基线上方。</p>
+    </div>
+    <div class="panel">
+      <h3>弯矩 M：下侧受拉为正</h3>
+      <svg class="sign-fig" viewBox="0 0 300 130" role="img" aria-label="正弯矩：梁下凸变形，下侧受拉">
+        <path d="M70 52 Q150 96 230 52 L230 74 Q150 118 70 74 Z" class="ink" style="fill:var(--soft)"/>
+        <path class="rx" d="M48 72 A22 22 0 0 1 62 41"/><path class="rxf" d="M70 41 l-10 -6 v12z"/>
+        <path class="rx" d="M252 72 A22 22 0 0 0 238 41"/><path class="rxf" d="M230 41 l10 -6 v12z"/>
+        <text x="150" y="40" class="t2 cn" text-anchor="middle">上侧受压</text>
+        <text x="150" y="128" class="t2 cn" text-anchor="middle">下侧受拉 → M 为正</text>
+      </svg>
+      <p class="note">向下的荷载会把梁压弯成“碗”形，所以简支梁的 M 通常为正。M 图画在受拉一侧，正值画在基线下方。</p>
+    </div>
+  </div>
+  <div class="panel" style="margin-top:1rem">
+    <h3>荷载与反力的方向</h3>
+    <p class="note" style="margin:0">本页中向下的集中力和分布荷载为正，向上的反力为正，作用在梁上的力偶以顺时针为正。单位统一用 kN、kN/m、m、kN·m。</p>
+  </div>
+</section>
+
+<section id="five">
+  <h2>五步画图法</h2>
+  <p>不论荷载多复杂，流程都一样。后面的例题会逐步演示这五步。</p>
+  <ol class="steps5">
+    <li><span class="n">1</span><div><b>画受力图</b>去掉支座，换成反力 R<sub>A</sub>、R<sub>B</sub>，标出全部荷载和尺寸。</div></li>
+    <li><span class="n">2</span><div><b>求支座反力</b>对 A 点取矩 ΣM<sub>A</sub>=0 得 R<sub>B</sub>，再由 ΣF<sub>y</sub>=0 得 R<sub>A</sub>，最后用 ΣM<sub>B</sub>=0 校核。</div></li>
+    <li><span class="n">3</span><div><b>分段</b>在集中力、集中力偶、分布荷载的起点和终点处断开。每一段内荷载的形式不变，图线的形状也不变。</div></li>
+    <li><span class="n">4</span><div><b>画剪力图</b>从左端出发，遇到向上的力就向上跳，遇到向下的力就向下跳，段内按荷载决定水平线或斜线。最后必须回到 0。</div></li>
+    <li><span class="n">5</span><div><b>画弯矩图</b>算出各分段点的 M，段内按 V 的正负决定上升或下降，V=0 处取极值。两端 M 必为 0（有力偶时看跳变）。</div></li>
+  </ol>
+</section>
+
+<section id="law">
+  <h2>荷载与图形的规律</h2>
+  <p>这些规律来自微分关系：<code>dV/dx = −q</code>，<code>dM/dx = V</code>。记住它们，不用算每个点也能判断图形的大致样子。</p>
+  <div class="tbl"><table>
+    <thead><tr><th>荷载情况</th><th>剪力图 V</th><th>弯矩图 M</th></tr></thead>
+    <tbody>
+      <tr><td>无荷载的段</td><td>水平线</td><td>斜直线：V&gt;0 上升，V&lt;0 下降，V=0 为水平线</td></tr>
+      <tr><td>向下的均布荷载 q</td><td>斜直线，向右下降，斜率 −q</td><td>二次抛物线，凸向与荷载同向（向下）</td></tr>
+      <tr><td>线性变化的分布荷载</td><td>二次抛物线</td><td>三次曲线</td></tr>
+      <tr><td>集中力 P（向下）</td><td>在该点向下突变，突变量 = P</td><td>出现折角（尖点），不突变</td></tr>
+      <tr><td>集中力偶 M₀（顺时针）</td><td>不受影响，无突变</td><td>在该点突变，顺时针向下跳，逆时针向上跳，突变量 = M₀</td></tr>
+      <tr><td>V = 0 的位置</td><td>V 图与基线相交处</td><td>弯矩取极值（最大或最小）</td></tr>
+      <tr><td>两端支座</td><td>端点 V 等于该端反力</td><td>简支端无力偶时 M = 0</td></tr>
+    </tbody></table></div>
+  <div class="rules">
+    <div><b>V 图的面积</b><span>某两截面之间 V 图的面积，等于这两截面 M 的差。</span></div>
+    <div><b>反力校核</b><span>V 图从 R<sub>A</sub> 出发，减掉全部向下荷载后，应当正好回到 −R<sub>B</sub>。</span></div>
+    <div><b>最大弯矩位置</b><span>在 V 变号的点，或集中力偶作用处的跳变点，要逐个比较。</span></div>
+  </div>
+</section>
+
+<section id="cases">
+  <h2>七个典型例题</h2>
+  <p>选一个荷载，拖动滑块改变尺寸，再点上方的 1 到 5 步逐步展开。把鼠标（或手指）移到图上，可以读出任意截面的 V 和 M。</p>
+  <div class="bench" id="case-bench"></div>
+</section>
+
+<section id="lab">
+  <h2>自己组合荷载</h2>
+  <p>添加任意数量的集中力、均布或梯形荷载、集中力偶，看叠加后的内力图。可以先用它验证你的作业答案。</p>
+  <div class="bench" id="lab-bench"></div>
+</section>
+
+<section id="quiz">
+  <h2>自测</h2>
+  <p>五道小题，选完立即给出解析。</p>
+  <div class="quiz" id="quiz-box"></div>
+  <div class="score" id="quiz-score" aria-live="polite"></div>
+</section>
+
+<footer>数值由叠加法按静力平衡计算，保留两位小数。弯矩图画在受拉一侧。仅用于学习，工程设计请以规范和正式计算书为准。</footer>
+</div>
+
+<script>
+'use strict';
+/* ---------- 计算引擎：简支梁，向下荷载为正，M 以下侧受拉为正，力偶以顺时针为正 ---------- */
+const EPS = 1e-9;
+
+function fmt(v, d = 2) {
+  if (!isFinite(v)) return '–';
+  const s = v.toFixed(d);
+  if (parseFloat(s) === 0) return '0';
+  const t = s.indexOf('.') >= 0 ? s.replace(/0+$/, '').replace(/\.$/, '') : s;
+  return t.replace('-', '−');
+}
+function sf(v, d = 2) {
+  const t = fmt(v, d);
+  return v > 0 && t !== '0' ? '+' + t : t;
+}
+
+/* 在 (lo,hi) 内找 fn 的变号点：记录上一个非零符号的位置，符号翻转时二分 */
+function findRoots(fn, lo, hi, n = 120) {
+  const out = [];
+  const sg = v => v > 1e-9 ? 1 : v < -1e-9 ? -1 : 0;
+  let lx = lo, ls = sg(fn(lo));
+  for (let i = 1; i <= n; i++) {
+    const x = lo + (hi - lo) * i / n;
+    const s = sg(fn(x));
+    if (s === 0) continue;
+    if (ls === 0) { lx = x; ls = s; continue; }
+    if (s !== ls) {
+      let a = lx, b = x;
+      for (let k = 0; k < 60; k++) {
+        const m = (a + b) / 2;
+        if (sg(fn(m)) === ls || sg(fn(m)) === 0) a = m; else b = m;
+      }
+      out.push((a + b) / 2);
+    }
+    lx = x; ls = s;
+  }
+  return out;
+}
+
+class Beam {
+  constructor(L, loads) {
+    this.L = L;
+    this.loads = loads;
+    this.solve();
+  }
+  /* 分布荷载的合力 [F, 作用点 x] */
+  static res(ld) {
+    if (ld.t === 'P') return [ld.F, ld.x];
+    if (ld.t === 'q') {
+      const l = ld.b - ld.a;
+      const F = (ld.w1 + ld.w2) / 2 * l;
+      const s = ld.w1 + ld.w2;
+      const xc = Math.abs(s) < 1e-12 ? (ld.a + ld.b) / 2 : ld.a + l * (ld.w1 + 2 * ld.w2) / (3 * s);
+      return [F, xc];
+    }
+    return [0, ld.x];
+  }
+  solve() {
+    let sF = 0, sFx = 0, sM = 0;
+    for (const ld of this.loads) {
+      if (ld.t === 'M') sM += ld.M;
+      else { const [F, xc] = Beam.res(ld); sF += F; sFx += F * xc; }
+    }
+    this.sumF = sF; this.sumFx = sFx; this.sumM = sM;
+    this.RB = (sFx + sM) / this.L;
+    this.RA = sF - this.RB;
+  }
+  /* 分布荷载中位于 x 左侧的部分：[合力, 对 x 点的力矩] */
+  qLeft(ld, x) {
+    const a = ld.a, b = ld.b;
+    const s = Math.min(Math.max(x, a), b);
+    const u = s - a;
+    const k = (ld.w2 - ld.w1) / (b - a);
+    const F = ld.w1 * u + k * u * u / 2;
+    const tw = a * (ld.w1 * u + k * u * u / 2) + (ld.w1 * u * u / 2 + k * u * u * u / 3);
+    return [F, x * F - tw];
+  }
+  wAt(x) {
+    let w = 0;
+    for (const ld of this.loads) {
+      if (ld.t === 'q' && x > ld.a && x < ld.b) w += ld.w1 + (ld.w2 - ld.w1) * (x - ld.a) / (ld.b - ld.a);
+    }
+    return w;
+  }
+  V(x) {
+    let v = this.RA;
+    for (const ld of this.loads) {
+      if (ld.t === 'P') { if (ld.x < x) v -= ld.F; }
+      else if (ld.t === 'q') v -= this.qLeft(ld, x)[0];
+    }
+    return v;
+  }
+  M(x) {
+    let m = this.RA * x;
+    for (const ld of this.loads) {
+      if (ld.t === 'P') { if (ld.x < x) m -= ld.F * (x - ld.x); }
+      else if (ld.t === 'q') m -= this.qLeft(ld, x)[1];
+      else if (ld.x < x) m += ld.M;
+    }
+    return m;
+  }
+  bps() {
+    const s = new Set([0, this.L]);
+    for (const ld of this.loads) {
+      if (ld.t === 'q') { s.add(+ld.a.toFixed(9)); s.add(+ld.b.toFixed(9)); }
+      else s.add(+ld.x.toFixed(9));
+    }
+    return [...s].filter(v => v >= -1e-9 && v <= this.L + 1e-9).sort((p, q) => p - q)
+      .filter((v, i, arr) => i === 0 || v - arr[i - 1] > 1e-7);
+  }
+  names() {
+    const b = this.bps(), letters = 'CDEFGHIJKLMN';
+    return b.map((_, i) => i === 0 ? 'A' : i === b.length - 1 ? 'B' : letters[i - 1]);
+  }
+  segs() {
+    const b = this.bps(), n = this.names(), out = [];
+    for (let i = 0; i < b.length - 1; i++) {
+      const p = b[i], q = b[i + 1];
+      const vs = this.V(p + EPS), ve = this.V(q - EPS), ms = this.M(p + EPS), me = this.M(q - EPS);
+      const ws = this.wAt(p + EPS), we = this.wAt(q - EPS);
+      const kind = (Math.abs(ws) < 1e-9 && Math.abs(we) < 1e-9) ? 'none' : (Math.abs(ws - we) < 1e-9 ? 'uniform' : 'linear');
+      out.push({ i, p, q, name: n[i] + n[i + 1], vs, ve, ms, me, ws, we, kind, area: this.segArea(p, q) });
+    }
+    return out;
+  }
+  segArea(p, q) {
+    const a = p + EPS, b = q - EPS, m = (a + b) / 2;
+    return (b - a) / 6 * (this.V(a) + 4 * this.V(m) + this.V(b));
+  }
+  area() { return this.segs().reduce((s, g) => s + g.area, 0); }
+  /* V 变号的位置 */
+  zeros() {
+    const bp = this.bps(), zs = [];
+    for (let i = 0; i < bp.length - 1; i++) {
+      for (const r of findRoots(x => this.V(x), bp[i] + EPS, bp[i + 1] - EPS)) zs.push(r);
+    }
+    return zs;
+  }
+  extremes() {
+    const bp = this.bps(), zs = this.zeros(), cand = [];
+    for (const x of bp) {
+      cand.push({ x, M: this.M(Math.max(0, x - EPS)) });
+      cand.push({ x, M: this.M(Math.min(this.L, x + EPS)) });
+    }
+    for (const x of zs) cand.push({ x, M: this.M(x) });
+    let mx = cand[0], mn = cand[0];
+    for (const c of cand) { if (c.M > mx.M) mx = c; if (c.M < mn.M) mn = c; }
+    return { zeros: zs.map(x => ({ x, M: this.M(x) })), Mmax: mx, Mmin: mn };
+  }
+}
+
+/* ---------- 绘图 ---------- */
+const MX = 46;
+const H_TOTAL = 570;
+const Y_BM = 140;
+const PANEL = { vTop: 318, vH: 76, mTop: 452, mH: 76 };
+let UID = 0;
+
+function axisLayout(top, H, vals, posUp) {
+  const mx = Math.max(0, ...vals), mn = Math.max(0, ...vals.map(v => -v));
+  const tot = mx + mn;
+  if (tot < 1e-9) return { y0: top + H / 2, s: 0 };
+  const s = H / tot;
+  // posUp: 正值向上；否则正值向下
+  return posUp ? { y0: top + mx * s, s } : { y0: top + mn * s, s };
+}
+
+function sample(beam, seg, fn, n = 48) {
+  const pts = [];
+  const a = seg.p + EPS, b = seg.q - EPS;
+  for (let i = 0; i <= n; i++) { const x = a + (b - a) * i / n; pts.push([x, fn(x)]); }
+  return pts;
+}
+
+function arrowDown(x, y1, y2, cls = 'ink') {
+  return `<path class="${cls}" d="M${x} ${y1}V${y2 - 1}"/><path class="inkf" d="M${x} ${y2} l-4 -9 h8z"/>`;
+}
+function arrowUp(x, y1, y2, cls = 'rx', fcls = 'rxf') {
+  return `<path class="${cls}" d="M${x} ${y1}V${y2 + 1}"/><path class="${fcls}" d="M${x} ${y2} l-4.5 10 h9z"/>`;
+}
+
+function buildSVG(beam, stage, W, uid) {
+  const L = beam.L, segs = beam.segs(), bps = beam.bps(), names = beam.names();
+  const X = m => MX + (W - 2 * MX) * m / L;
+  const out = [];
+  out.push(`<defs><pattern id="g${uid}" width="20" height="20" patternUnits="userSpaceOnUse"><path class="gridl" d="M20 0H0V20"/></pattern></defs>`);
+  out.push(`<rect width="${W}" height="${H_TOTAL}" fill="url(#g${uid})"/>`);
+
+  /* 分段线与点名 */
+  if (stage >= 3) {
+    bps.forEach((x, i) => {
+      out.push(`<path class="guide" d="M${X(x)} 24V${PANEL.mTop + PANEL.mH + 22}"/>`);
+      out.push(`<text x="${X(x)}" y="16" text-anchor="middle" class="b">${names[i]}</text>`);
+    });
+  } else {
+    out.push(`<text x="${X(0)}" y="16" text-anchor="middle" class="b">A</text><text x="${X(L)}" y="16" text-anchor="middle" class="b">B</text>`);
+  }
+
+  /* 梁与支座 */
+  const yb = Y_BM;
+  out.push(`<rect x="${X(0)}" y="${yb - 4}" width="${X(L) - X(0)}" height="8" class="ink" style="fill:var(--soft)"/>`);
+  out.push(`<path class="ink" d="M${X(0)} ${yb + 4} l-11 20 h22z" style="fill:var(--surface)"/><path class="ink" d="M${X(0) - 17} ${yb + 24}h34"/>`);
+  out.push(`<path class="ink" d="M${X(L)} ${yb + 4} l-11 17 h22z" style="fill:var(--surface)"/><circle cx="${X(L) - 6}" cy="${yb + 25}" r="3.6" class="ink"/><circle cx="${X(L) + 6}" cy="${yb + 25}" r="3.6" class="ink"/><path class="ink" d="M${X(L) - 17} ${yb + 29}h34"/>`);
+
+  /* 荷载 */
+  const Ps = beam.loads.filter(l => l.t === 'P'), Qs = beam.loads.filter(l => l.t === 'q'), Ms = beam.loads.filter(l => l.t === 'M');
+  const maxF = Math.max(1e-9, ...Ps.map(l => Math.abs(l.F)));
+  const maxW = Math.max(1e-9, ...Qs.map(l => Math.max(Math.abs(l.w1), Math.abs(l.w2))));
+  for (const l of Qs) {
+    if (l.w1 === 0 && l.w2 === 0) continue;
+    const x1 = X(l.a), x2 = X(l.b), top = yb - 4;
+    const h1 = 12 + 38 * Math.abs(l.w1) / maxW, h2 = 12 + 38 * Math.abs(l.w2) / maxW;
+    const hh = x => h1 + (h2 - h1) * (x - x1) / (x2 - x1);
+    out.push(`<path class="ink" d="M${x1} ${top}V${top - h1}L${x2} ${top - h2}V${top}" style="fill:var(--soft);fill-opacity:.7"/>`);
+    const n = Math.max(2, Math.round((x2 - x1) / 20));
+    for (let i = 0; i <= n; i++) {
+      const x = x1 + (x2 - x1) * i / n;
+      if (i > 0 && i < n) out.push(arrowDown(x, top - hh(x), top - 1));
+    }
+    const uni = Math.abs(l.w1 - l.w2) < 1e-9;
+    const lab = uni ? `q=${fmt(l.w1)}` : `${fmt(l.w1)}→${fmt(l.w2)}`;
+    out.push(`<text x="${(x1 + x2) / 2}" y="${top - Math.max(h1, h2) - 6}" text-anchor="middle" class="sm">${lab} kN/m</text>`);
+  }
+  for (const l of Ps) {
+    const len = 28 + 32 * Math.abs(l.F) / maxF, x = X(l.x);
+    out.push(arrowDown(x, yb - 4 - len, yb - 5));
+    out.push(`<text x="${x}" y="${yb - 4 - len - 6}" text-anchor="middle" class="sm">P=${fmt(l.F)} kN</text>`);
+  }
+  for (const l of Ms) {
+    const x = X(l.x), r = 17, cy = yb - 30, cw = l.M >= 0;
+    if (cw) out.push(`<path class="ink" d="M${x - r} ${cy}A${r} ${r} 0 0 1 ${x + r} ${cy}"/><path class="inkf" d="M${x + r} ${cy + 6} l-4.5 -9 h9z"/>`);
+    else out.push(`<path class="ink" d="M${x + r} ${cy}A${r} ${r} 0 0 0 ${x - r} ${cy}"/><path class="inkf" d="M${x - r} ${cy + 6} l-4.5 -9 h9z"/>`);
+    out.push(`<text x="${x}" y="${cy - r - 6}" text-anchor="middle" class="sm">M₀=${fmt(Math.abs(l.M))} ${cw ? '↻' : '↺'}</text>`);
+  }
+
+  /* 反力 */
+  const rA = stage >= 2 ? `R_A=${fmt(beam.RA)}` : 'R_A', rB = stage >= 2 ? `R_B=${fmt(beam.RB)}` : 'R_B';
+  const rcls = stage >= 2 ? ['rx', 'rxf', 'tr'] : ['thin', 'inkf', 't2'];
+  for (const [xx, lab, anchor] of [[X(0), rA, 'middle'], [X(L), rB, 'middle']]) {
+    out.push(`<path class="${rcls[0]}" d="M${xx} ${yb + 72}V${yb + 41}" ${stage < 2 ? 'stroke-dasharray="3 3"' : ''}/><path class="${rcls[1]}" d="M${xx} ${yb + 34} l-4.5 10 h9z" ${stage < 2 ? 'style="fill:var(--ink-2)"' : ''}/>`);
+    out.push(`<text x="${xx}" y="${yb + 88}" text-anchor="${anchor}" class="${rcls[2]} sm b">${lab}${stage >= 2 ? ' kN' : ''}</text>`);
+  }
+
+  /* 尺寸线 */
+  const yd = yb + 112;
+  out.push(`<path class="thin" d="M${X(0)} ${yd}H${X(L)}"/>`);
+  bps.forEach((x, i) => {
+    out.push(`<path class="thin" d="M${X(x)} ${yd - 5}V${yd + 5}"/>`);
+    if (i > 0) {
+      const d = x - bps[i - 1];
+      out.push(`<text x="${(X(x) + X(bps[i - 1])) / 2}" y="${yd + 16}" text-anchor="middle" class="t2 sm">${fmt(d)} m</text>`);
+    }
+  });
+
+  /* V 图 */
+  const vTop = PANEL.vTop, vH = PANEL.vH;
+  const Vvals = []; segs.forEach(g => { Vvals.push(g.vs, g.ve); });
+  const vA = axisLayout(vTop, vH, Vvals, true);
+  const yV = v => vA.y0 - v * vA.s;
+  out.push(`<text x="10" y="${vTop - 30}" class="panelhead tv">剪力图 V（kN）</text>`);
+  const Mvals = []; segs.forEach(g => { Mvals.push(g.ms, g.me); }); beam.extremes().zeros.forEach(z => Mvals.push(z.M));
+  const mA = axisLayout(PANEL.mTop, PANEL.mH, Mvals, false);
+  const yM = m => mA.y0 + m * mA.s;
+  out.push(`<text x="10" y="${PANEL.mTop - 30}" class="panelhead tm">弯矩图 M（kN·m，画在受拉侧）</text>`);
+
+  function profile(fn, yf, lineCls, fillCls, y0) {
+    let d = `M${X(0)} ${y0}`;
+    segs.forEach(g => {
+      const pts = sample(beam, g, fn);
+      pts.forEach(([x, v], i) => { d += `L${X(x).toFixed(2)} ${yf(v).toFixed(2)}`; });
+    });
+    d += `L${X(L)} ${y0}`;
+    return `<path class="${fillCls}" d="${d}Z"/><path class="${lineCls}" d="${d}"/>`;
+  }
+  function labels(kind, yf, above, tcls, dotCls) {
+    const res = [], placed = [];
+    const key = kind === 'v' ? ['vs', 've'] : ['ms', 'me'];
+    const n = segs.length;
+    for (let k = 0; k <= n; k++) {
+      const left = k > 0 ? segs[k - 1][key[1]] : null, right = k < n ? segs[k][key[0]] : null;
+      const x = X(bps[k]);
+      const put = (val, anchor, dx) => {
+        const up = above ? val >= 0 : val < 0;
+        const y = yf(val);
+        res.push(`<circle class="${dotCls}" cx="${x}" cy="${y}" r="3.4"/>`);
+        if ((k === 0 || k === n) && Math.abs(val) < 1e-9) return;
+        const txt = sf(val), wpx = txt.length * 6.8 + 2, cx = x + dx;
+        const x1 = anchor === 'middle' ? cx - wpx / 2 : anchor === 'end' ? cx - wpx : cx, x2 = x1 + wpx;
+        const hits = placed.filter(p => p.up === up && p.x1 < x2 && p.x2 > x1).length;
+        placed.push({ x1, x2, up });
+        const off = Math.min(hits, 2) * 13;
+        res.push(`<text x="${cx}" y="${y + (up ? -8 - off : 17 + off)}" text-anchor="${anchor}" class="${tcls} sm b">${txt}</text>`);
+      };
+      if (left !== null && right !== null) {
+        if (Math.abs(left - right) < 1e-5) put(left, 'middle', 0);
+        else { put(left, 'end', -5); put(right, 'start', 5); }
+      } else if (right !== null) put(right, 'start', 5);
+      else if (left !== null) put(left, 'end', -5);
+    }
+    return res.join('');
+  }
+  const ext = beam.extremes();
+  if (stage >= 4) {
+    out.push(`<path class="base" d="M${X(0)} ${vA.y0}H${X(L)}"/>`);
+    out.push(profile(x => beam.V(x), yV, 'vl', 'vf', vA.y0));
+    out.push(labels('v', yV, true, 'tv', 'vdot'));
+    ext.zeros.forEach(z => {
+      out.push(`<circle cx="${X(z.x)}" cy="${vA.y0}" r="3.6" style="fill:var(--surface);stroke:var(--v);stroke-width:2"/>`);
+      out.push(`<text x="${X(z.x)}" y="${vA.y0 + (vA.y0 - vTop > vH / 2 ? -9 : 17)}" text-anchor="middle" class="tv sm">x=${fmt(z.x)}</text>`);
+    });
+  } else {
+    out.push(`<path class="thin" d="M${X(0)} ${vTop + vH / 2}H${X(L)}" stroke-dasharray="3 4"/><text x="${W / 2}" y="${vTop + vH / 2 - 8}" text-anchor="middle" class="ph">第 4 步画剪力图</text>`);
+  }
+  if (stage >= 5) {
+    out.push(`<path class="base" d="M${X(0)} ${mA.y0}H${X(L)}"/>`);
+    out.push(profile(x => beam.M(x), yM, 'ml', 'mf', mA.y0));
+    out.push(labels('m', yM, false, 'tm', 'mdot'));
+    if (Math.abs(ext.Mmax.M) > 1e-9) out.push(`<circle cx="${X(ext.Mmax.x)}" cy="${yM(ext.Mmax.M)}" r="8" style="fill:none;stroke:var(--m);stroke-width:1.5"/>`);
+    ext.zeros.forEach(z => {
+      if (Math.abs(z.M) < 1e-9) return;
+      out.push(`<circle class="mdot" cx="${X(z.x)}" cy="${yM(z.M)}" r="4"/>`);
+      out.push(`<text x="${X(z.x)}" y="${yM(z.M) + (z.M >= 0 ? 17 : -8)}" text-anchor="middle" class="tm sm b">${z.M === ext.Mmax.M ? 'Mmax ' : ''}${sf(z.M)}</text>`);
+    });
+  } else {
+    out.push(`<path class="thin" d="M${X(0)} ${PANEL.mTop + PANEL.mH / 2}H${X(L)}" stroke-dasharray="3 4"/><text x="${W / 2}" y="${PANEL.mTop + PANEL.mH / 2 - 8}" text-anchor="middle" class="ph">第 5 步画弯矩图</text>`);
+  }
+
+  /* 图签 */
+  const ty = H_TOTAL - 12;
+  out.push(`<text x="${W - 10}" y="${ty}" text-anchor="end" class="t2 sm">简支梁  L=${fmt(L)} m  ·  kN, m</text>`);
+  if (stage >= 5 && Math.abs(ext.Mmax.M) > 1e-9) out.push(`<circle cx="18" cy="${ty - 4}" r="6" style="fill:none;stroke:var(--m);stroke-width:1.5"/><text x="30" y="${ty}" class="t2 sm cn">最大弯矩处</text>`);
+
+  /* 游标 */
+  out.push(`<g class="cur" style="display:none"><path class="cursor" d="M0 24V${PANEL.mTop + PANEL.mH + 18}"/><circle class="vdot" r="4.5" style="display:none"/><circle class="mdot" r="4.5" style="display:none"/></g>`);
+  out.push(`<rect class="hit" x="${X(0)}" y="0" width="${X(L) - X(0)}" height="${H_TOTAL}"/>`);
+  return { svg: out.join(''), X, yV, yM, hasV: stage >= 4, hasM: stage >= 5 };
+}
+
+/* ---------- 讲解文字 ---------- */
+function nameOf(beam, x) {
+  const b = beam.bps(), n = beam.names();
+  for (let i = 0; i < b.length; i++) if (Math.abs(b[i] - x) < 1e-6) return n[i];
+  return '?';
+}
+const SHAPE_V = { none: '水平线', uniform: '斜直线', linear: '二次抛物线' };
+const SHAPE_M = { none: '斜直线', uniform: '二次抛物线', linear: '三次曲线' };
+const LOADTXT = g => g.kind === 'none' ? '无荷载' : g.kind === 'uniform' ? `均布 q=${fmt(g.ws)} kN/m` : `线性 ${fmt(g.ws)}→${fmt(g.we)} kN/m`;
+
+function tableHTML(head, rows, numCols = []) {
+  return `<div class="tbl"><table><thead><tr>${head.map((h, i) => `<th${numCols.includes(i) ? ' class="num"' : ''}>${h}</th>`).join('')}</tr></thead><tbody>${rows.map(r => `<tr>${r.map((c, i) => `<td${numCols.includes(i) ? ' class="num mono"' : ''}>${c}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+}
+
+function explainStage(beam, stage) {
+  const L = beam.L, segs = beam.segs(), bps = beam.bps(), nm = beam.names();
+  const title = ['受力图', '求支座反力', '分段', '画剪力图', '画弯矩图'][stage - 1];
+  let h = `<h3>第 ${stage} 步 <span class="pill ${stage === 4 ? 'v' : stage === 5 ? 'm' : stage === 2 ? 'r' : ''}">${title}</span></h3>`;
+
+  if (stage === 1) {
+    h += `<p>去掉支座，换成反力。A 端是固定铰支座，B 端是活动铰支座，荷载全部竖直向下，所以只有竖向反力 <code>R_A</code>、<code>R_B</code>（水平反力为 0）。</p><ul class="tight">`;
+    if (!beam.loads.length) h += '<li>梁上暂时没有荷载。</li>';
+    for (const l of beam.loads) {
+      if (l.t === 'P') h += `<li>集中力 P=${fmt(l.F)} kN，作用在 ${nameOf(beam, l.x)} 点，距 A 端 ${fmt(l.x)} m。</li>`;
+      if (l.t === 'q') h += `<li>${Math.abs(l.w1 - l.w2) < 1e-9 ? `均布荷载 q=${fmt(l.w1)} kN/m` : `线性分布荷载 ${fmt(l.w1)}→${fmt(l.w2)} kN/m`}，从 ${nameOf(beam, l.a)} 点（${fmt(l.a)} m）到 ${nameOf(beam, l.b)} 点（${fmt(l.b)} m）。</li>`;
+      if (l.t === 'M') h += `<li>集中力偶 M₀=${fmt(Math.abs(l.M))} kN·m，${l.M >= 0 ? '顺时针' : '逆时针'}，作用在 ${nameOf(beam, l.x)} 点（${fmt(l.x)} m）。</li>`;
+    }
+    h += `</ul><p class="note">图中虚线箭头是还不知道大小的反力，下一步求出。</p>`;
+  }
+
+  if (stage === 2) {
+    const lines = [], terms = [], termsB = [];
+    for (const l of beam.loads) {
+      if (l.t === 'P') { terms.push(`${fmt(l.F)}×${fmt(l.x)}`); termsB.push(`${fmt(l.F)}×${fmt(L - l.x)}`); }
+      if (l.t === 'q') {
+        const [F, xc] = Beam.res(l);
+        lines.push(`q 的合力 Q = ${fmt(F)} kN，作用在重心 x=${fmt(xc)} m`);
+        terms.push(`${fmt(F)}×${fmt(xc)}`); termsB.push(`${fmt(F)}×${fmt(L - xc)}`);
+      }
+    }
+    const Ms = beam.loads.filter(l => l.t === 'M');
+    const msum = Ms.reduce((s, l) => s + l.M, 0);
+    const extra = Ms.length ? ` ${msum >= 0 ? '+' : '−'} ${fmt(Math.abs(msum))}` : '';
+    const extraB = Ms.length ? ` ${msum >= 0 ? '−' : '+'} ${fmt(Math.abs(msum))}` : '';
+    const sumFx = terms.length ? terms.join(' + ') : '0';
+    h += `<p>对 A 点取矩（顺时针为正），再列竖向平衡。</p>`;
+    if (lines.length) h += `<div class="calc">${lines.join('\n')}</div>`;
+    h += `<div class="calc">ΣM_A = 0：R_B·L = Σ(F·x) + ΣM₀\nR_B × ${fmt(L)} = ${sumFx}${extra}\nR_B = ${fmt(beam.RB)} kN  ↑\n\nΣF_y = 0：R_A = ΣF − R_B\nR_A = ${fmt(beam.sumF)} − ${fmt(beam.RB)} = ${fmt(beam.RA)} kN  ↑</div>`;
+    const chk = (beam.sumF * L - beam.sumFx - beam.sumM) / L;
+    h += `<p>校核：对 B 点取矩，R_A·L = Σ F·(L−x) − ΣM₀ = ${termsB.length ? termsB.join(' + ') : '0'}${extraB}，得 R_A = ${fmt(chk)} kN <span class="tick">${Math.abs(chk - beam.RA) < 1e-6 ? '✓ 与上面一致' : '✗'}</span></p>`;
+    if (beam.RA < -1e-9 || beam.RB < -1e-9) h += `<p class="note">出现了负的反力，说明该支座实际向下拉，这在大力偶作用时是正常的。</p>`;
+  }
+
+  if (stage === 3) {
+    h += `<p>在荷载发生变化的位置断开。共 ${bps.length} 个分段点，${segs.length} 个梁段，每段内荷载形式不变。</p>`;
+    h += tableHTML(['梁段', '范围 x (m)', '荷载'], segs.map(g => [g.name, `${fmt(g.p)} – ${fmt(g.q)}`, LOADTXT(g)]));
+    const ev = [];
+    bps.forEach((x, i) => {
+      if (i === 0 || i === bps.length - 1) return;
+      const parts = [];
+      for (const l of beam.loads) {
+        if (l.t === 'P' && Math.abs(l.x - x) < 1e-6) parts.push(`集中力 ${fmt(l.F)} kN`);
+        if (l.t === 'M' && Math.abs(l.x - x) < 1e-6) parts.push(`集中力偶 ${fmt(Math.abs(l.M))} kN·m`);
+        if (l.t === 'q' && Math.abs(l.a - x) < 1e-6) parts.push('分布荷载起点');
+        if (l.t === 'q' && Math.abs(l.b - x) < 1e-6) parts.push('分布荷载终点');
+      }
+      ev.push(`<li><b>${nm[i]}</b>（x=${fmt(x)} m）：${parts.join('、')}</li>`);
+    });
+    if (ev.length) h += `<ul class="tight">${ev.join('')}</ul>`;
+  }
+
+  if (stage === 4) {
+    h += `<p>从左端出发：V 先从 0 跳到 R_A，段内按荷载走线，遇到集中力就突变，最后回到 0。</p>`;
+    h += tableHTML(['梁段', '荷载', 'V 左端', 'V 右端', '图线'], segs.map(g => [g.name, LOADTXT(g), sf(g.vs), sf(g.ve), SHAPE_V[g.kind]]), [2, 3]);
+    const jumps = [];
+    bps.forEach((x, i) => {
+      if (i === 0 || i === bps.length - 1) return;
+      const dv = segs[i].vs - segs[i - 1].ve;
+      if (Math.abs(dv) > 1e-5) jumps.push(`<li><b>${nm[i]}</b> 点：V 由 ${sf(segs[i - 1].ve)} 跳到 ${sf(segs[i].vs)}，跳变 ${sf(dv)}，等于 −P。</li>`);
+    });
+    if (jumps.length) h += `<ul class="tight">${jumps.join('')}</ul>`;
+    const ex = beam.extremes();
+    h += ex.zeros.length ? `<p>V 变号的位置：${ex.zeros.map(z => `x = ${fmt(z.x)} m`).join('，')}。这里弯矩取极值。</p>` : '<p>V 在段内不变号，弯矩的最大值出现在分段点上。</p>';
+    const atEdge = beam.loads.some(l => l.t === 'P' && (l.x < 1e-6 || l.x > L - 1e-6));
+    h += atEdge ? `<p class="note">有集中力直接作用在支座上，它由支座直接承担，不在梁内产生剪力，所以图的端点值与 R_A、R_B 相差这个力。</p>`
+      : `<p>校核：右端 V = ${sf(segs[segs.length - 1].ve)} kN，应等于 −R_B = ${sf(-beam.RB)} kN <span class="tick">${Math.abs(segs[segs.length - 1].ve + beam.RB) < 1e-6 ? '✓' : '✗'}</span></p>`;
+  }
+
+  if (stage === 5) {
+    h += `<p>M 图的斜率就是 V：V&gt;0 时向下增大（图上往下走），V&lt;0 时减小。先算分段点的 M，再按图线连起来。</p>`;
+    const trend = g => {
+      if (g.kind === 'none') return Math.abs(g.vs) < 1e-9 ? '水平线' : g.vs > 0 ? '斜直线，M 增大' : '斜直线，M 减小';
+      return `${SHAPE_M[g.kind]}，${g.ws + g.we > 0 ? '向下凸' : '向上凸'}`;
+    };
+    h += tableHTML(['梁段', 'M 左端', 'M 右端', '图线'], segs.map(g => [g.name, sf(g.ms), sf(g.me), trend(g)]), [1, 2]);
+    const jumps = [];
+    bps.forEach((x, i) => {
+      if (i === 0 || i === bps.length - 1) return;
+      const dm = segs[i].ms - segs[i - 1].me;
+      if (Math.abs(dm) > 1e-5) jumps.push(`<li><b>${nm[i]}</b> 点：M 由 ${sf(segs[i - 1].me)} 跳到 ${sf(segs[i].ms)}，${dm > 0 ? '向下跳' : '向上跳'} ${fmt(Math.abs(dm))}，等于力偶值。</li>`);
+    });
+    if (jumps.length) h += `<ul class="tight">${jumps.join('')}</ul>`;
+    const e = beam.extremes();
+    h += `<p><b>最大弯矩</b> M<sub>max</sub> = <span class="mono">${fmt(e.Mmax.M)}</span> kN·m，在 x = ${fmt(e.Mmax.x)} m 处。${e.Mmin.M < -1e-9 ? `最小（负）弯矩 ${fmt(e.Mmin.M)} kN·m，在 x = ${fmt(e.Mmin.x)} m 处。` : ''}</p>`;
+    const area = beam.area();
+    const inner = beam.loads.filter(l => l.t === 'M' && l.x > 1e-6 && l.x < L - 1e-6).reduce((a, l) => a + l.M, 0);
+    const dM = segs[segs.length - 1].me - segs[0].ms;
+    h += `<p class="note">检验：V 图的总面积 = ${fmt(area)}，应等于 M 图两端值之差 ${fmt(dM)} 减去梁内全部力偶 ${fmt(inner)}（${Math.abs(area - (dM - inner)) < 1e-4 ? '成立 ✓' : '不成立 ✗'}）。</p>`;
+  }
+  return h;
+}
+
+/* ---------- 查看器：步骤条 + 图 + 讲解 ---------- */
+const $ = (s, r = document) => r.querySelector(s);
+const STEP_NAMES = ['受力图', '求反力', '分段', '剪力图', '弯矩图'];
+
+function createViewer(root, initialStage) {
+  const uid = ++UID;
+  let stage = initialStage || 1, model = null, geo = null, beam = null;
+  root.innerHTML = `<div class="stepper" role="group" aria-label="作图步骤"></div>
+    <div class="viewer"><div class="sheet"><div class="readout" hidden></div><svg role="img" aria-label="简支梁受力图、剪力图和弯矩图"></svg></div><div class="explain panel"></div></div>
+    <div class="tips panel flat" hidden></div>`;
+  const stepper = $('.stepper', root), svg = $('svg', root), sheet = $('.sheet', root), ro = $('.readout', root), ex = $('.explain', root), tips = $('.tips', root);
+
+  function drawStepper() {
+    stepper.innerHTML = STEP_NAMES.map((n, i) => `<button type="button" class="st${i + 1 < stage ? ' done' : ''}" data-s="${i + 1}" ${i + 1 === stage ? 'aria-current="step"' : ''}><i>${i + 1}</i>${n}</button>`).join('') +
+      `<span class="sp"></span><button type="button" class="btn ghost" data-a="prev" ${stage <= 1 ? 'disabled' : ''}>上一步</button><button type="button" class="btn" data-a="next" ${stage >= 5 ? 'disabled' : ''}>下一步</button>`;
+  }
+  stepper.addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    if (b.dataset.s) stage = +b.dataset.s;
+    else if (b.dataset.a === 'next') stage = Math.min(5, stage + 1);
+    else if (b.dataset.a === 'prev') stage = Math.max(1, stage - 1);
+    render();
+  });
+
+  function render() {
+    if (!model) return;
+    beam = new Beam(model.L, model.loads);
+    const W = Math.max(320, Math.round(sheet.clientWidth || 640));
+    svg.setAttribute('viewBox', `0 0 ${W} ${H_TOTAL}`);
+    svg.setAttribute('width', W); svg.setAttribute('height', H_TOTAL);
+    geo = buildSVG(beam, stage, W, uid);
+    svg.innerHTML = geo.svg;
+    drawStepper();
+    ex.innerHTML = explainStage(beam, stage);
+    if (model.tips) { tips.hidden = false; tips.innerHTML = model.tips; } else tips.hidden = true;
+    ro.hidden = true;
+  }
+
+  function onMove(e) {
+    if (!geo || !geo.hasV) return;
+    const r = svg.getBoundingClientRect(), scale = (+svg.getAttribute('viewBox').split(' ')[2]) / r.width;
+    const px = (e.clientX - r.left) * scale;
+    const W = +svg.getAttribute('viewBox').split(' ')[2];
+    const m = Math.min(beam.L, Math.max(0, (px - MX) / (W - 2 * MX) * beam.L));
+    const xm = Math.min(beam.L - 2e-7, Math.max(2e-7, m));
+    const g = $('.cur', svg); if (!g) return;
+    g.style.display = '';
+    const sx = geo.X(m);
+    $('path', g).setAttribute('d', `M${sx} 24V${PANEL.mTop + PANEL.mH + 18}`);
+    const [dv, dm] = g.querySelectorAll('circle');
+    const v = beam.V(xm), mm = beam.M(xm);
+    dv.style.display = ''; dv.setAttribute('cx', sx); dv.setAttribute('cy', geo.yV(v));
+    if (geo.hasM) { dm.style.display = ''; dm.setAttribute('cx', sx); dm.setAttribute('cy', geo.yM(mm)); } else dm.style.display = 'none';
+    ro.hidden = false;
+    ro.innerHTML = `x=<b>${fmt(m)}</b> m  V=<b>${sf(v)}</b>${geo.hasM ? `  M=<b>${sf(mm)}</b>` : ''}`;
+  }
+  function onLeave() { const g = $('.cur', svg); if (g) g.style.display = 'none'; ro.hidden = true; }
+  svg.addEventListener('pointermove', onMove);
+  svg.addEventListener('pointerdown', onMove);
+  svg.addEventListener('pointerleave', onLeave);
+
+  let lastW = 0;
+  if (window.ResizeObserver) new ResizeObserver(() => { const w = sheet.clientWidth; if (Math.abs(w - lastW) > 2) { lastW = w; render(); } }).observe(sheet);
+  return { set(m) { model = m; render(); }, setStage(s) { stage = s; render(); } };
+}
+
+/* ---------- 七个例题 ---------- */
+const CASES = [
+  { name: '跨中集中力', desc: '最基本的一种：一个集中力作用在跨中。V 图是两个等值反号的矩形，M 图是三角形。',
+    params: [{ k: 'L', n: '跨度 L', u: 'm', min: 2, max: 12, st: 1, v: 6 }, { k: 'P', n: '集中力 P', u: 'kN', min: 2, max: 40, st: 1, v: 12 }],
+    build: p => ({ L: p.L, loads: [{ t: 'P', F: p.P, x: p.L / 2 }] }),
+    tips: p => `<b>记住：</b>R_A = R_B = P/2，M<sub>max</sub> = PL/4 = ${fmt(p.P * p.L / 4)} kN·m，在跨中。V 在跨中从 +P/2 跳到 −P/2。` },
+  { name: '任意位置集中力', desc: '集中力偏离跨中。离力近的支座反力大，V 图两段高度不同，M 图的尖点在力的作用点。',
+    params: [{ k: 'L', n: '跨度 L', u: 'm', min: 2, max: 12, st: 1, v: 8 }, { k: 'P', n: '集中力 P', u: 'kN', min: 2, max: 40, st: 1, v: 20 }, { k: 'a', n: '距 A 端 a', u: 'm', min: .5, max: p => p.L - .5, st: .5, v: 3 }],
+    build: p => ({ L: p.L, loads: [{ t: 'P', F: p.P, x: p.a }] }),
+    tips: p => `<b>记住：</b>R_A = P·b/L，R_B = P·a/L（b 为力到 B 端的距离），M<sub>max</sub> = P·a·b/L = ${fmt(p.P * p.a * (p.L - p.a) / p.L)} kN·m，在力的作用点。` },
+  { name: '满跨均布荷载', desc: '全梁受均匀分布的力。V 图是一条过零点的斜直线，M 图是抛物线，顶点在跨中。',
+    params: [{ k: 'L', n: '跨度 L', u: 'm', min: 2, max: 12, st: 1, v: 6 }, { k: 'q', n: '均布荷载 q', u: 'kN/m', min: 1, max: 20, st: 1, v: 4 }],
+    build: p => ({ L: p.L, loads: [{ t: 'q', a: 0, b: p.L, w1: p.q, w2: p.q }] }),
+    tips: p => `<b>记住：</b>R_A = R_B = qL/2，M<sub>max</sub> = qL²/8 = ${fmt(p.q * p.L * p.L / 8)} kN·m，在跨中，此处 V=0。斜率 dV/dx = −q。` },
+  { name: '局部均布荷载', desc: '均布荷载只覆盖一段。荷载段内 V 是斜线、M 是抛物线；荷载段外 V 水平、M 是斜直线。',
+    params: [{ k: 'L', n: '跨度 L', u: 'm', min: 4, max: 12, st: 1, v: 8 }, { k: 'q', n: '均布荷载 q', u: 'kN/m', min: 1, max: 20, st: 1, v: 5 }, { k: 'a', n: '起点距 A', u: 'm', min: 0, max: p => p.L - 1, st: .5, v: 2 }, { k: 'c', n: '荷载长度', u: 'm', min: 1, max: p => p.L - p.a, st: .5, v: 4 }],
+    build: p => ({ L: p.L, loads: [{ t: 'q', a: p.a, b: p.a + p.c, w1: p.q, w2: p.q }] }),
+    tips: p => `<b>记住：</b>先把 q 换成合力 Q = q·c = ${fmt(p.q * p.c)} kN 求反力。若 V = 0 的点落在荷载段内，位置是 x = a + R_A/q，M 在此取极值。` },
+  { name: '三角形荷载', desc: '荷载从 A 端的 0 线性增大到 B 端。V 是二次抛物线，M 是三次曲线，最大弯矩偏向较轻的一侧。',
+    params: [{ k: 'L', n: '跨度 L', u: 'm', min: 2, max: 12, st: 1, v: 6 }, { k: 'w', n: 'B 端荷载集度', u: 'kN/m', min: 1, max: 20, st: 1, v: 6 }],
+    build: p => ({ L: p.L, loads: [{ t: 'q', a: 0, b: p.L, w1: 0, w2: p.w }] }),
+    tips: p => `<b>记住：</b>合力 Q = wL/2，作用在离大端 L/3 处。R_A = wL/6，R_B = wL/3。M<sub>max</sub> = wL²/(9√3) = ${fmt(p.w * p.L * p.L / (9 * Math.sqrt(3)))} kN·m，在 x = L/√3 = ${fmt(p.L / Math.sqrt(3))} m。` },
+  { name: '集中力偶', desc: '力偶不产生合力，但产生反力偶。V 图是一条水平线，M 图在力偶处向下（顺时针）突跳，两侧是平行的斜直线。',
+    params: [{ k: 'L', n: '跨度 L', u: 'm', min: 2, max: 12, st: 1, v: 6 }, { k: 'M', n: '力偶 M₀（顺时针为正）', u: 'kN·m', min: -30, max: 30, st: 1, v: 12 }, { k: 'a', n: '距 A 端 a', u: 'm', min: .5, max: p => p.L - .5, st: .5, v: 2 }],
+    build: p => ({ L: p.L, loads: [{ t: 'M', M: p.M, x: p.a }] }),
+    tips: p => `<b>记住：</b>R_A = −M₀/L，R_B = +M₀/L，大小相等方向相反。V 处处等于 ${sf(-p.M / p.L)} kN。M 在力偶处跳变 ${fmt(Math.abs(p.M))} kN·m，两端 M 仍为 0。` },
+  { name: '综合荷载', desc: '集中力、力偶和局部均布同时作用。内力是各荷载单独作用的叠加，但仍按同一套五步走。',
+    params: [{ k: 'L', n: '跨度 L', u: 'm', min: 6, max: 14, st: 1, v: 8 }, { k: 'P', n: '集中力 P', u: 'kN', min: 2, max: 40, st: 1, v: 10 }, { k: 'q', n: '均布荷载 q', u: 'kN/m', min: 1, max: 20, st: 1, v: 3 }, { k: 'M', n: '力偶 M₀', u: 'kN·m', min: -30, max: 30, st: 1, v: 8 }],
+    build: p => ({ L: p.L, loads: [{ t: 'P', F: p.P, x: p.L / 4 }, { t: 'M', M: p.M, x: 0.4 * p.L }, { t: 'q', a: p.L / 2, b: p.L, w1: p.q, w2: p.q }] }),
+    tips: p => `<b>记住：</b>分段点是 P、M₀ 作用点和 q 的起点，共 4 段。V 在 P 处下跳，M 在 M₀ 处突跳，q 段内 V 是斜线。多个荷载时，先列表求出每个分段点的 V 和 M，再连线。` }
+];
+
+function readParams(c, state) {
+  const p = {};
+  c.params.forEach(d => { p[d.k] = state[d.k] != null ? state[d.k] : d.v; });
+  // 限制：依赖其他参数的上限
+  c.params.forEach(d => {
+    const mx = typeof d.max === 'function' ? d.max(p) : d.max;
+    const mn = typeof d.min === 'function' ? d.min(p) : d.min;
+    p[d.k] = Math.min(mx, Math.max(mn, p[d.k]));
+  });
+  return p;
+}
+
+function mountCases() {
+  const root = $('#case-bench');
+  root.innerHTML = `<div class="chips" role="group" aria-label="选择例题"></div><p class="case-desc"></p><div class="params panel"></div><div class="vw"></div>`;
+  const chips = $('.chips', root), desc = $('.case-desc', root), pbox = $('.params', root);
+  const viewer = createViewer($('.vw', root), 1);
+  let cur = 0, state = {};
+  chips.innerHTML = CASES.map((c, i) => `<button type="button" class="chip" data-i="${i}" aria-pressed="false">${i + 1}. ${c.name}</button>`).join('');
+  chips.addEventListener('click', e => { const b = e.target.closest('.chip'); if (!b) return; cur = +b.dataset.i; state = {}; setCase(); });
+
+  function setCase() {
+    const c = CASES[cur];
+    chips.querySelectorAll('.chip').forEach((b, i) => b.setAttribute('aria-pressed', i === cur ? 'true' : 'false'));
+    desc.textContent = c.desc;
+    const p = readParams(c, state);
+    pbox.innerHTML = c.params.map(d => {
+      const mx = typeof d.max === 'function' ? d.max(p) : d.max, mn = typeof d.min === 'function' ? d.min(p) : d.min;
+      return `<div class="param"><label for="p-${d.k}">${d.n}<output id="o-${d.k}">${fmt(p[d.k])} ${d.u}</output></label><input type="range" id="p-${d.k}" data-k="${d.k}" min="${mn}" max="${mx}" step="${d.st}" value="${p[d.k]}"></div>`;
+    }).join('');
+    refresh();
+  }
+  function refresh() {
+    const c = CASES[cur], p = readParams(c, state);
+    c.params.forEach(d => { const o = $('#o-' + d.k, pbox); if (o) o.textContent = `${fmt(p[d.k])} ${d.u}`; });
+    const m = c.build(p); m.tips = c.tips(p);
+    viewer.set(m);
+  }
+  pbox.addEventListener('input', e => {
+    const k = e.target.dataset.k; if (!k) return;
+    state[k] = parseFloat(e.target.value);
+    const c = CASES[cur], p = readParams(c, state);
+    // 依赖关系变了，重设滑块范围
+    c.params.forEach(d => {
+      const el = $('#p-' + d.k, pbox);
+      if (!el || d.k === k) return;
+      const mx = typeof d.max === 'function' ? d.max(p) : d.max, mn = typeof d.min === 'function' ? d.min(p) : d.min;
+      el.min = mn; el.max = mx; el.value = p[d.k];
+    });
+    refresh();
+  });
+  setCase();
+}
+
+/* ---------- 自由组合 ---------- */
+function mountLab() {
+  const root = $('#lab-bench');
+  root.innerHTML = `<div class="panel"><div class="param"><label for="lab-L">跨度 L<output id="lab-Lo"></output></label><input type="range" id="lab-L" min="2" max="20" step="1" value="8"></div></div>
+    <div class="addbar"><span class="note">添加荷载：</span>
+      <button type="button" class="btn ghost" data-add="P">+ 集中力</button><button type="button" class="btn ghost" data-add="q">+ 均布 / 梯形</button><button type="button" class="btn ghost" data-add="M">+ 力偶</button>
+      <button type="button" class="btn ghost" data-add="reset">恢复示例</button></div>
+    <div class="loadlist"></div><p class="note warn" hidden style="color:var(--warn)"></p><div class="vw"></div>`;
+  const viewer = createViewer($('.vw', root), 5);
+  const list = $('.loadlist', root), warn = $('.warn', root), Lin = $('#lab-L', root), Lo = $('#lab-Lo', root);
+  let loads = [], L = 8, nid = 0;
+  const sample = () => { loads = [{ id: ++nid, t: 'P', F: 10, x: 2 }, { id: ++nid, t: 'M', M: 8, x: 3 }, { id: ++nid, t: 'q', a: 4, b: 8, w1: 3, w2: 3 }]; };
+  sample();
+
+  const FIELDS = {
+    P: [['F', 'P (kN)', 0, 1e3], ['x', '位置 x (m)', 0, null]],
+    q: [['w1', '起点集度 (kN/m)', 0, 1e3], ['w2', '终点集度 (kN/m)', 0, 1e3], ['a', '起点 (m)', 0, null], ['b', '终点 (m)', 0, null]],
+    M: [['M', 'M₀ (kN·m，顺时针为正)', -1e3, 1e3], ['x', '位置 x (m)', 0, null]]
+  };
+  const TAG = { P: '集中力', q: '分布荷载', M: '力偶' };
+
+  function drawList() {
+    list.innerHTML = loads.map(l => `<div class="loadrow" data-id="${l.id}"><span class="tag">${TAG[l.t]}</span>${FIELDS[l.t].map(([k, n]) => `<label>${n}<input type="number" step="0.5" data-k="${k}" value="${l[k]}"></label>`).join('')}<button type="button" class="btn ghost del" data-del="${l.id}">删除</button></div>`).join('') || '<p class="note">还没有荷载，点上面的按钮添加。</p>';
+  }
+  function model() {
+    const msgs = [], out = [];
+    for (const l of loads) {
+      const cl = (v, lo, hi) => Math.min(hi, Math.max(lo, isFinite(v) ? v : 0));
+      if (l.t === 'P') out.push({ t: 'P', F: cl(l.F, 0, 1e3), x: cl(l.x, 0, L) });
+      if (l.t === 'M') out.push({ t: 'M', M: cl(l.M, -1e3, 1e3), x: cl(l.x, 0, L) });
+      if (l.t === 'q') {
+        const a = cl(l.a, 0, L), b = cl(l.b, 0, L);
+        if (b - a < 0.01) { msgs.push('有一段分布荷载的终点必须大于起点，已暂时忽略。'); continue; }
+        out.push({ t: 'q', a, b, w1: cl(l.w1, 0, 1e3), w2: cl(l.w2, 0, 1e3) });
+      }
+      const raw = l.t === 'q' ? [l.a, l.b] : [l.x];
+      if (raw.some(v => v < 0 || v > L)) msgs.push('有荷载的位置超出了梁，已取到梁端。');
+    }
+    warn.hidden = !msgs.length; warn.textContent = [...new Set(msgs)].join(' ');
+    return { L, loads: out, tips: '<span class="note">叠加原理：每个荷载单独产生的 V、M 相加，就是总的内力。可以只留一个荷载，对照上面的例题检查。</span>' };
+  }
+  function refresh() { Lo.textContent = ` ${L} m`; viewer.set(model()); }
+
+  $('.addbar', root).addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    const t = b.dataset.add;
+    if (t === 'reset') sample();
+    else if (t === 'P') loads.push({ id: ++nid, t: 'P', F: 10, x: L / 2 });
+    else if (t === 'q') loads.push({ id: ++nid, t: 'q', a: 0, b: L, w1: 4, w2: 4 });
+    else if (t === 'M') loads.push({ id: ++nid, t: 'M', M: 10, x: L / 2 });
+    drawList(); refresh();
+  });
+  list.addEventListener('click', e => { const b = e.target.closest('[data-del]'); if (!b) return; loads = loads.filter(l => l.id !== +b.dataset.del); drawList(); refresh(); });
+  list.addEventListener('input', e => {
+    const row = e.target.closest('.loadrow'); if (!row || !e.target.dataset.k) return;
+    const l = loads.find(x => x.id === +row.dataset.id); l[e.target.dataset.k] = parseFloat(e.target.value);
+    refresh();
+  });
+  Lin.addEventListener('input', () => { L = parseFloat(Lin.value); refresh(); });
+  drawList(); refresh();
+}
+
+/* ---------- 自测 ---------- */
+const QUIZ = [
+  { q: '跨度 L 的简支梁，跨中作用集中力 P，最大弯矩是多少？', o: ['PL/2', 'PL/4', 'PL/8', 'PL²/8'], a: 1, w: '对称，R_A = P/2，M_max = (P/2)(L/2) = PL/4。PL²/8 的量纲不对（它应当是 qL²/8 的形式）。' },
+  { q: '跨度 L 的简支梁受满跨均布荷载 q，最大弯矩及位置是？', o: ['qL²/8，在跨中', 'qL²/4，在跨中', 'qL²/8，在支座', 'qL²/2，在跨中'], a: 0, w: 'R_A = qL/2，跨中 V=0，M = (qL/2)(L/2) − (q·L/2)(L/4) = qL²/8。' },
+  { q: '跨度 4 m 的简支梁，距 A 端 1 m 处有 10 kN 向下的集中力，R_A 是多少？', o: ['2.5 kN', '5 kN', '7.5 kN', '10 kN'], a: 2, w: '对 B 取矩：R_A × 4 = 10 × 3，R_A = 7.5 kN。力靠近 A，A 承担得多。' },
+  { q: '梁上某点作用集中力偶时，内力图的变化是？', o: ['V 图突变，M 图不变', 'V 图不变，M 图突变', '两图都突变', '两图都不变'], a: 1, w: '力偶不产生竖向力，所以 V 不变；M 在该点突变，突变量等于力偶值。' },
+  { q: '剪力图中 V = 0 的截面，弯矩图上对应什么？', o: ['M 一定为 0', 'M 取极值', 'M 突变', 'M 图出现折角'], a: 1, w: '因为 dM/dx = V，V 变号处 M 的斜率变号，M 取极值。' }
+];
+function mountQuiz() {
+  const box = $('#quiz-box'), sc = $('#quiz-score');
+  let done = 0, ok = 0;
+  box.innerHTML = QUIZ.map((q, i) => `<div class="q" data-i="${i}"><p class="qt">${i + 1}. ${q.q}</p><div class="opts">${q.o.map((t, j) => `<button type="button" class="opt" data-j="${j}">${'ABCD'[j]}. ${t}</button>`).join('')}</div><p class="why">${q.w}</p></div>`).join('');
+  box.addEventListener('click', e => {
+    const b = e.target.closest('.opt'); if (!b) return;
+    const card = b.closest('.q'); if (card.classList.contains('done')) return;
+    const q = QUIZ[+card.dataset.i], j = +b.dataset.j;
+    card.classList.add('done');
+    card.querySelectorAll('.opt').forEach((o, k) => { if (k === q.a) o.classList.add('right'); else if (k === j) o.classList.add('wrong'); });
+    done++; if (j === q.a) ok++;
+    sc.textContent = `已答 ${done}/${QUIZ.length}，答对 ${ok}` + (done === QUIZ.length ? (ok === QUIZ.length ? '，全对。' : '。可以回到例题里再拖一拖滑块。') : '');
+  });
+}
+
+mountCases(); mountLab(); mountQuiz();
+
+</script>
+
+</body></html>

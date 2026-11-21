@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<script type="application/json" id="doc-meta">
+{
+  "title": "门架结构竖直均布荷载",
+  "course": "structural-mechanics",
+  "chapter": "ch03-displacement-method",
+  "tags": [
+    "位移法",
+    "门式刚架",
+    "均布荷载"
+  ],
+  "prerequisites": [],
+  "related": [
+    "structural-mechanics/frame-displacement-method-from-zero"
+  ],
+  "source": "待补充",
+  "review": {
+    "status": "unreviewed",
+    "by": "",
+    "date": ""
+  },
+  "created": "2026-11-21"
+}
+</script>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>门式刚架位移法 · 详细步骤版</title>
+<style>
+:root{--ink:#1f2430;--blue:#2f6fdb;--red:#d6336c;--green:#1f9d55;--bg:#f5f7fb}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.8 -apple-system,"PingFang SC","Microsoft YaHei",sans-serif}
+header{background:linear-gradient(135deg,#243b6b,#3b6fd8);color:#fff;padding:26px 18px}
+header h1{margin:0 0 4px;font-size:25px}header p{margin:0;opacity:.92}
+main{max-width:920px;margin:0 auto;padding:10px 14px 60px}
+nav{background:#fff;border-radius:14px;padding:10px 16px;margin:16px 0;box-shadow:0 2px 10px rgba(30,40,80,.07);font-size:15px}
+nav a{color:#2f5fc4;text-decoration:none;margin-right:12px;display:inline-block;white-space:nowrap}
+section{background:#fff;border-radius:14px;padding:16px 18px 22px;margin:16px 0;box-shadow:0 2px 10px rgba(30,40,80,.07)}
+h2{margin:0 0 10px;font-size:21px;border-left:6px solid #3b6fd8;padding-left:10px}
+h3{margin:16px 0 4px;font-size:17.5px}
+p{margin:8px 0}
+.eq{background:#f1f3f9;border-radius:10px;padding:10px 14px;margin:10px 0;font-family:Consolas,"Courier New",monospace;white-space:pre-wrap;line-height:1.95;font-size:15px;overflow-x:auto}
+.tip{background:#eaf3ff;border-left:5px solid #3b6fd8;border-radius:10px;padding:10px 14px;margin:10px 0;font-size:15px}
+.warn{background:#fff4e5;border-left:5px solid #f08c00;border-radius:10px;padding:10px 14px;margin:10px 0;font-size:15px}
+.ok{background:#e9f8ef;border-left:5px solid #1f9d55;border-radius:10px;padding:10px 14px;margin:10px 0;font-size:15px}
+.why{background:#faf5ff;border-left:5px solid #8a4fd6;border-radius:10px;padding:10px 14px;margin:10px 0;font-size:15px}
+svg{width:100%;height:auto;display:block;background:#fcfdff;border:1px solid #e1e6f0;border-radius:10px}
+table{border-collapse:collapse;width:100%;font-size:14.5px;margin:8px 0}
+th,td{border:1px solid #d8deea;padding:6px 8px;text-align:center}th{background:#eef2fb}
+button{background:#3b6fd8;color:#fff;border:0;border-radius:8px;padding:8px 14px;font-size:15px;cursor:pointer;margin:4px 6px 4px 0}
+button.alt{background:#e9edf7;color:#243b6b}
+input[type=range]{width:100%}
+details{background:#f7f8fc;border-radius:8px;padding:6px 12px;margin:8px 0}
+summary{cursor:pointer;font-weight:700;color:#243b6b}
+.val{font-weight:700;color:var(--red)}
+.small{font-size:13.5px;color:#667085}
+</style>
+</head>
+<body>
+<header><h1>门式刚架：位移法求 M 图、Q 图</h1><p>先复述题目、画出原图，再把每一步的来历讲清楚</p></header>
+<main>
+<nav><b>目录：</b><a href="#s0">0 复述题目</a><a href="#s1">1 原图</a><a href="#s2">2 思路</a><a href="#s3">3 未知数</a><a href="#s4">4 线刚度</a><a href="#s5">5 固端弯矩</a><a href="#s6">6 转角位移方程</a><a href="#s7">7 节点平衡</a><a href="#s8">8 杆端弯矩</a><a href="#s9">9 M 图</a><a href="#s10">10 Q 图</a><a href="#s11">11 变形动画</a><a href="#s12">12 总校核</a></nav>
+
+<!-- 0 -->
+<section id="s0">
+<h2>0　先复述一遍题目</h2>
+<p>有一个<b>平面刚架</b>，由<b>一根水平梁</b>和<b>两根竖直柱</b>组成，像一个倒着的"门"字：</p>
+<table>
+<tr><th>项目</th><th>内容</th></tr>
+<tr><td>梁</td><td>水平梁 CD，两端是节点 C、D，长 <b>6 m</b>，抗弯刚度 <b>3EI</b></td></tr>
+<tr><td>柱</td><td>竖直柱 AC（连 C 节点）、BD（连 D 节点），各长 <b>4 m</b>，抗弯刚度 <b>EI</b></td></tr>
+<tr><td>节点</td><td>C、D 是<b>刚性连接</b>（梁柱焊死，转角一样）</td></tr>
+<tr><td>支座</td><td>A、B 是<b>固定支座</b>（不能移动，也不能转动）</td></tr>
+<tr><td>荷载</td><td>梁 CD 全长受竖直向下的<b>均布荷载 q = 6 kN/m</b>（题中的"kn/m"按 kN/m 处理）</td></tr>
+<tr><td>要求</td><td>用位移法求<b>弯矩图（M 图）</b>和<b>剪力图（Q 图）</b></td></tr>
+</table>
+<div class="warn">说明：我看不到你的原图，下面的图是<b>严格按这段文字重画的</b>。我还做了两个惯例假设：① 荷载方向竖直向下；② 忽略杆件的轴向（拉压）变形，这是位移法教材的通用做法。如果你的原图和文字有出入，请告诉我。</div>
+</section>
+
+<!-- 1 -->
+<section id="s1">
+<h2>1　原题结构图</h2>
+<svg id="fig1" viewBox="0 0 640 420"></svg>
+<p class="small">图中：蓝色梁 CD（3EI），橙色柱 AC、BD（EI），红色箭头是荷载，A、B 处的斜线表示固定支座（"嵌"在地里）。</p>
+</section>
+
+<!-- 2 -->
+<section id="s2">
+<h2>2　整体思路：位移法一共五步</h2>
+<div class="eq">① 找未知数：节点会发生什么位移？（本题只有一个：C 点的转角 θ）
+② 算线刚度 i = EI/l，把每根杆"有多硬"变成一个数
+③ 把节点先"锁死"，查出荷载在杆端产生的弯矩（固端弯矩）
+④ 写每个杆端的弯矩：固端弯矩 + 节点转动引起的弯矩（转角位移方程）
+⑤ 列节点力矩平衡方程，解出 θ，再回代，画 M 图、Q 图</div>
+<div class="tip">一句话：<b>先把节点锁住 → 再松开让它自己转到平衡位置</b>。转了多少，就决定了每根杆的弯矩。</div>
+</section>
+
+<!-- 3 -->
+<section id="s3">
+<h2>3　第一步：找基本未知数（为什么只有 θ<sub>C</sub>）</h2>
+<h3>3.1 节点有哪些可能的位移？</h3>
+<p>一个节点原则上有三种位移：水平移动、竖直移动、转动。</p>
+<table>
+<tr><th>位移</th><th>C 点能不能有？</th><th>理由</th></tr>
+<tr><td>竖直移动</td><td>❌ 不能</td><td>柱 AC 下端 A 固定，且杆不会压缩（忽略轴向变形），C 点上下动不了</td></tr>
+<tr><td>水平移动（侧移）</td><td>❌ 不能</td><td>见 3.2 的对称性分析</td></tr>
+<tr><td>转动 θ<sub>C</sub></td><td>✅ 可以</td><td>C 是刚节点，梁、柱可以一起转，A 端固定不限制 C 端转动</td></tr>
+</table>
+<h3>3.2 为什么没有侧移？——对称性</h3>
+<p>结构左右完全对称（两根柱一样，梁居中，支座一样），荷载也左右对称。对称的结构受对称的荷载，变形一定也是对称的。<br>而"整体向右（或向左）歪一下"的变形是<b>不对称</b>的，所以不会发生，C、D 都没有侧移。</p>
+<h3>3.3 θ<sub>D</sub> 和 θ<sub>C</sub> 是什么关系？</h3>
+<p>变形对称，就像照镜子：左边节点<b>顺时针</b>转，右边节点就<b>逆时针</b>转同样的角度，所以 <b>θ<sub>D</sub> = −θ<sub>C</sub></b>。</p>
+<div class="ok">结论：设 θ<sub>C</sub> = θ（顺时针为正），则 θ<sub>D</sub> = −θ。<b>基本未知数只有一个：θ。</b><br>
+符号规定：转角、杆端弯矩都以<b>顺时针为正</b>。</div>
+</section>
+
+<!-- 4 -->
+<section id="s4">
+<h2>4　第二步：算线刚度 i = EI/l</h2>
+<p>线刚度表示"杆弯起来有多费劲"：杆越粗越硬（EI 越大），越短越硬（l 越小），所以 i = EI / l。</p>
+<div class="eq">柱：i<sub>柱</sub> = EI / 4 m = EI/4　　我们把它记作 <b>i</b>
+梁：i<sub>梁</sub> = 3EI / 6 m = EI/2 = 2 × (EI/4) = <b>2i</b></div>
+<div class="tip">以后所有量都用 i 表示：<b>柱 = i，梁 = 2i</b>。最后 i 会被约掉，不用知道 EI 的具体数。</div>
+</section>
+
+<!-- 5 -->
+<section id="s5">
+<h2>5　第三步：锁住节点，求梁的固端弯矩</h2>
+<p>想象在 C、D 装上"锁"，不让节点转动。这时梁 CD 两端都被卡死（两端固定），在均布荷载 q 下，两端会产生反力矩，这就是<b>固端弯矩</b>。柱上没有荷载，固端弯矩为 0。</p>
+<h3>5.1 公式 ql²/12 是怎么来的？</h3>
+<div class="eq">把"两端固定的梁"看成"简支梁 + 两端的力矩"：
+① 简支梁在 q 作用下，两端会转动，转角 = ql³/(24EI)（教材标准结果）
+② 但固定端不许转，所以两端要各加一个力矩 M，把转角"扳回去"
+③ 梁两端各加一个大小为 M 的力矩，端部转角 = Ml/(2EI)
+④ 令两者相等：Ml/(2EI) = ql³/(24EI)  →  <b>M = ql²/12</b></div>
+<h3>5.2 代数</h3>
+<div class="eq">ql²/12 = 6 × 6² / 12 = 6 × 36 / 12 = <b>18 kN·m</b>
+
+左端 C：向下的荷载把梁往下压，C 端固定墙要把梁端"往上掰"，
+        是逆时针的力矩，所以 M<sub>CD</sub><sup>F</sup> = <b>−18</b>
+右端 D：顺时针，所以 M<sub>DC</sub><sup>F</sup> = <b>+18</b>
+柱 AC、BD：没有荷载，固端弯矩 = 0</div>
+<div class="tip">所以锁住 C 点时，C 点上的弯矩之和 = −18（梁）+ 0（柱）= −18，不为零，说明"锁"还在受力。第 7 步松开它。</div>
+</section>
+
+<!-- 6 -->
+<section id="s6">
+<h2>6　第四步：写每个杆端的弯矩（转角位移方程）</h2>
+<h3>6.1 要用的两个"刚度"</h3>
+<p>一根杆，近端转了 θ，远端被固定（不转不移），近端要用的力矩是 <b>4iθ</b>，远端会同时产生 <b>2iθ</b>（传到远端的一半）。</p>
+<details><summary>点开看：4i 和 2i 是怎么来的</summary>
+<p>杆的两个端部弯矩 M<sub>a</sub>、M<sub>b</sub>（顺时针为正）与端部转角 θ<sub>a</sub>、θ<sub>b</sub> 的关系是（简支梁的标准结果，用图乘法或共轭梁法可推）：</p>
+<div class="eq">θ<sub>a</sub> = l(2M<sub>a</sub> − M<sub>b</sub>) / (6EI)
+θ<sub>b</sub> = l(2M<sub>b</sub> − M<sub>a</sub>) / (6EI)</div>
+<p>现在让 θ<sub>a</sub> = θ，θ<sub>b</sub> = 0（远端固定）：由第二式 0 = 2M<sub>b</sub> − M<sub>a</sub>，得 M<sub>a</sub> = 2M<sub>b</sub>；代入第一式：θ = l(4M<sub>b</sub> − M<sub>b</sub>)/(6EI) = lM<sub>b</sub>/(2EI)，所以 M<sub>b</sub> = 2EIθ/l = <b>2iθ</b>，M<sub>a</sub> = <b>4iθ</b>。</p></details>
+<h3>6.2 写方程（"固端弯矩 + 转动引起的弯矩"叠加）</h3>
+<div class="eq"><b>梁 CD</b>（i<sub>梁</sub> = 2i，θ<sub>C</sub> = θ，θ<sub>D</sub> = −θ）：
+M<sub>CD</sub> = 4·(2i)·θ<sub>C</sub> + 2·(2i)·θ<sub>D</sub> + M<sub>CD</sub><sup>F</sup>
+     = 8iθ + 4i(−θ) − 18
+     = <b>4iθ − 18</b>
+   ↑ C 端自己转 θ 产生 4i<sub>梁</sub>θ；D 端转动传过来 2i<sub>梁</sub>θ<sub>D</sub>；再加固端弯矩
+M<sub>DC</sub> = 2·(2i)·θ + 4·(2i)·(−θ) + 18 = −4iθ + 18 …… 与 M<sub>CD</sub> 大小相同、符号相反（对称）
+
+<b>柱 AC</b>（C 端转 θ，A 端固定不转，i<sub>柱</sub> = i）：
+M<sub>CA</sub> = 4iθ　　M<sub>AC</sub> = 2iθ　（柱无荷载，没有固端弯矩）
+<b>柱 BD</b>：与 AC 对称</div>
+</section>
+
+<!-- 7 -->
+<section id="s7">
+<h2>7　第五步：C 点力矩平衡，解出 θ</h2>
+<p>把 C 节点单独取出来看：梁和柱各给 C 节点一个力矩，C 点不转动（处于平衡），所以这些力矩之和等于 0：</p>
+<div class="eq">M<sub>CD</sub> + M<sub>CA</sub> = 0
+(4iθ − 18) + 4iθ = 0
+8iθ = 18
+<b>iθ = 2.25</b>　　（即 θ = 2.25/i = 2.25 × 4/EI = 9/EI，顺时针）</div>
+<div class="why"><b>为什么要列这个方程？</b>前面把 θ 当成已知数写出了所有弯矩，但 θ 还没确定。真实的结构里，C 点没有外力偶，所以梁、柱在 C 点的弯矩必须自己抵消。这个条件就是用来确定 θ 的。</div>
+<p><b>D 点</b>不用再列：对称，方程完全一样。</p>
+</section>
+
+<!-- 8 -->
+<section id="s8">
+<h2>8　把 iθ = 2.25 代回去，得到所有杆端弯矩</h2>
+<table>
+<tr><th>杆端</th><th>公式</th><th>代入</th><th>结果 (kN·m)</th></tr>
+<tr><td>M<sub>CD</sub></td><td>4iθ − 18</td><td>4×2.25 − 18</td><td><b>−9</b></td></tr>
+<tr><td>M<sub>DC</sub></td><td>−4iθ + 18</td><td>−9 + 18</td><td><b>+9</b></td></tr>
+<tr><td>M<sub>CA</sub></td><td>4iθ</td><td>4×2.25</td><td><b>+9</b></td></tr>
+<tr><td>M<sub>AC</sub></td><td>2iθ</td><td>2×2.25</td><td><b>+4.5</b></td></tr>
+<tr><td>M<sub>DB</sub></td><td>−4iθ</td><td>−9</td><td><b>−9</b></td></tr>
+<tr><td>M<sub>BD</sub></td><td>−2iθ</td><td>−4.5</td><td><b>−4.5</b></td></tr>
+</table>
+<div class="ok"><b>校核：</b>C 点 M<sub>CD</sub> + M<sub>CA</sub> = −9 + 9 = 0 ✓；D 点 +9 − 9 = 0 ✓。</div>
+<h3>怎么判断弯矩画在哪一侧（受拉侧）？</h3>
+<p>杆端弯矩正负（顺时针为正）只是"转向"，M 图要画在<b>被拉长的那一侧</b>。判断方法：</p>
+<div class="eq">• 梁 CD：左端 C 是负（逆时针）→ 上侧受拉；右端 D 是正（顺时针）→ 上侧受拉
+         （两端都是上侧受拉，对称，和直觉一致：固定端使梁端"负弯矩"）
+• 柱：梁端上侧受拉，转到柱上就是"外侧受拉"（刚节点里，拉的那一侧是连着走的）
+         所以柱顶（C、D 处）是<b>外侧受拉</b>，大小 9
+• 柱底：M<sub>AC</sub> 与 M<sub>CA</sub> 同号，说明柱是"S 形（双曲率）"弯曲，
+         柱底改成<b>内侧受拉</b>，大小 4.5</div>
+</section>
+
+<!-- 9 -->
+<section id="s9">
+<h2>9　画 M 图</h2>
+<h3>9.1 梁：用"叠加法"画</h3>
+<p>梁的弯矩 = <b>端部力矩产生的直线</b> + <b>简支梁受 q 产生的抛物线</b>。点按钮一层一层叠上去：</p>
+<div><button id="bm1">① 端部力矩 −9（上拉）</button><button id="bm2" class="alt">② 加简支梁抛物线 ql²/8 = 27</button><button id="bm3" class="alt">③ 叠加结果</button></div>
+<svg id="figMb" viewBox="0 0 640 300"></svg>
+<div class="eq" id="infoMb"></div>
+<h3>9.2 柱：直线</h3>
+<p>柱上没有荷载，弯矩沿杆长是<b>直线</b>：柱顶 9（外侧受拉）→ 柱底 4.5（内侧受拉）。中间一定有一个点弯矩为 0：</p>
+<div class="eq">从柱底算，弯矩（以内拉为正）：M(y) = 4.5 − 3.375·y　（y 从柱底往上）
+斜率 3.375 = (9 + 4.5)/4，M = 0 的位置：y = 4.5/3.375 = <b>1.33 m</b>（离柱底）</div>
+<h3>9.3 完整 M 图</h3>
+<svg id="figM" viewBox="0 0 640 400"></svg>
+<table>
+<tr><th>位置</th><th>弯矩 (kN·m)</th><th>受拉侧</th></tr>
+<tr><td>梁两端 C、D</td><td>9</td><td>上侧</td></tr>
+<tr><td>梁跨中</td><td>18</td><td>下侧</td></tr>
+<tr><td>柱顶</td><td>9</td><td>外侧</td></tr>
+<tr><td>柱底 A、B</td><td>4.5</td><td>内侧</td></tr>
+</table>
+</section>
+
+<!-- 10 -->
+<section id="s10">
+<h2>10　画 Q 图（剪力图）</h2>
+<h3>10.1 梁的剪力</h3>
+<div class="eq">取梁 CD 为研究对象：竖向外力只有 q（总共 6×6 = 36 kN，向下）和两端柱子给它的竖直力。
+对称 → 两端竖直力相等，各 = 36/2 = <b>18 kN</b>（向上）
+
+在离 C 端 x 处切开，取左边部分，竖向平衡：
+Q(x) = 18 − 6x　（18 是左端竖直力，6x 是左边这段上的荷载）
+x = 0（C）：Q = <b>+18</b>
+x = 6（D）：Q = 18 − 36 = <b>−18</b>
+Q = 0：18 − 6x = 0，x = <b>3 m</b>（刚好跨中，也是 M 的最大值处）
+
+补充检查：M(x) = −9 + 18x − 3x²　　x = 3 时 M = −9 + 54 − 27 = 18 ✓（和叠加法一致）</div>
+<div class="tip">口诀：<b>Q 是 M 图的斜率</b>。梁上 M 在 x = 3 处最大，斜率为 0，所以 Q = 0 ✓。</div>
+<h3>10.2 柱的剪力</h3>
+<div class="eq">柱上没有荷载 → 剪力 Q 沿全柱是常数。取柱 AC 为研究对象：
+两端的弯矩 M<sub>CA</sub> = +9、M<sub>AC</sub> = +4.5 都是顺时针，共 13.5，
+要靠两端水平力构成的<b>逆时针力偶</b>平衡：
+Q × 柱长 = 13.5　→　Q = 13.5 / 4 = <b>3.375 kN</b>
+
+方向：要得到逆时针力偶，A 处力向右、C 处力向左。
+所以 A 处的水平反力 H<sub>A</sub> = 3.375 kN，指向结构内侧；对称，B 处 H<sub>B</sub> = 3.375 kN 指向左（也指向内侧）</div>
+<svg id="figQ" viewBox="0 0 640 400"></svg>
+<p class="small">柱的剪力正负各教材约定不同，这里按数值大小画在内侧。梁上上正下负。</p>
+<h3>10.3 轴力（顺便）</h3>
+<p>柱承受竖直压力 18 kN（等于梁端传来的竖直力）；梁承受水平压力 3.375 kN（等于柱的剪力，方向由平衡决定）。</p>
+</section>
+
+<!-- 11 -->
+<section id="s11">
+<h2>11　变形动画：节点 C 到底转了多少？</h2>
+<p>拖动滑块，看结构真实的变形（夸张放大）。柱中部向外鼓，C、D 向内转，梁中间下垂。</p>
+<svg id="figD" viewBox="0 0 640 400"></svg>
+<div>变形放大：<span class="val" id="vD">0%</span><input type="range" id="tD" min="0" max="100" value="0"></div>
+<div><button id="bD">▶ 播放</button></div>
+<div class="tip">C 点转角 θ = 9/EI，顺时针；D 点是对称的，逆时针。C、D 的位置不动，它们确实只发生了转动。</div>
+</section>
+
+<!-- 12 -->
+<section id="s12">
+<h2>12　总校核</h2>
+<table>
+<tr><th>检查</th><th>过程</th><th>结果</th></tr>
+<tr><td>节点 C 力矩平衡</td><td>−9 + 9</td><td>0 ✓</td></tr>
+<tr><td>竖向平衡</td><td>V<sub>A</sub> + V<sub>B</sub> = 18 + 18 = 6 × 6</td><td>36 ✓</td></tr>
+<tr><td>水平平衡</td><td>H<sub>A</sub> − H<sub>B</sub> = 3.375 − 3.375</td><td>0 ✓</td></tr>
+<tr><td>梁跨中弯矩</td><td>ql²/8 − 9 = 27 − 9 = 18，和积分结果一致</td><td>✓</td></tr>
+<tr><td>变形协调</td><td>梁 D 端转角、位移都满足 −θ、0（动画里能看出）</td><td>✓</td></tr>
+</table>
+<h3>最终答案</h3>
+<table>
+<tr><th>量</th><th>数值</th></tr>
+<tr><td>基本未知数</td><td>iθ = 2.25，即 θ<sub>C</sub> = 9/EI（顺时针），θ<sub>D</sub> = −9/EI</td></tr>
+<tr><td>M 图 (kN·m)</td><td>梁端 9（上拉），跨中 18（下拉）；柱顶 9（外拉），柱底 4.5（内拉）</td></tr>
+<tr><td>Q 图 (kN)</td><td>梁：+18 → −18（跨中为 0）；柱：常数 3.375</td></tr>
+<tr><td>支座反力</td><td>V<sub>A</sub> = V<sub>B</sub> = 18 kN（向上），H<sub>A</sub> = H<sub>B</sub> = 3.375 kN（指向内），M<sub>A</sub> = M<sub>B</sub> = 4.5 kN·m</td></tr>
+</table>
+</section>
+</main>
+
+<script>
+const NS="http://www.w3.org/2000/svg";
+const $=id=>document.getElementById(id);
+function mk(p,t,a,s){const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);if(s!==undefined)e.textContent=s;p.appendChild(e);return e;}
+const xA=170,xB=470,yb=120,yg=320,k=50; // 1 m = 50 px
+const COL='#e07b00',BEAM='#2f6fdb',RED='#d6336c';
+
+function dimH(svg,x1,x2,y,t){
+  mk(svg,'line',{x1,y1:y,x2,y2:y,stroke:'#667085'});
+  mk(svg,'line',{x1,y1:y-5,x2:x1,y2:y+5,stroke:'#667085'});mk(svg,'line',{x1:x2,y1:y-5,x2:x2,y2:y+5,stroke:'#667085'});
+  mk(svg,'text',{x:(x1+x2)/2,y:y-6,'text-anchor':'middle','font-size':14,fill:'#667085','font-style':'italic'},t);
+}
+function dimV(svg,x,y1,y2,t){
+  mk(svg,'line',{x1:x,y1,x2:x,y2,stroke:'#667085'});
+  mk(svg,'line',{x1:x-5,y1,x2:x+5,y2:y1,stroke:'#667085'});mk(svg,'line',{x1:x-5,y1:y2,x2:x+5,y2:y2,stroke:'#667085'});
+  mk(svg,'text',{x:x+8,y:(y1+y2)/2+4,'font-size':14,fill:'#667085','font-style':'italic'},t);
+}
+function fixedSup(svg,x){
+  mk(svg,'line',{x1:x-30,y1:yg,x2:x+30,y2:yg,stroke:'#555','stroke-width':5});
+  for(let i=0;i<7;i++)mk(svg,'line',{x1:x-30+i*10,y1:yg,x2:x-38+i*10,y2:yg+10,stroke:'#888','stroke-width':2});
+}
+function loadQ(svg){
+  for(let i=0;i<=12;i++){const x=xA+i*25;
+    mk(svg,'line',{x1:x,y1:yb-40,x2:x,y2:yb-10,stroke:RED,'stroke-width':2});
+    mk(svg,'path',{d:`M${x-4},${yb-18} L${x},${yb-9} L${x+4},${yb-18}`,fill:'none',stroke:RED,'stroke-width':2});}
+  mk(svg,'line',{x1:xA,y1:yb-40,x2:xB,y2:yb-40,stroke:RED,'stroke-width':2});
+  mk(svg,'text',{x:(xA+xB)/2,y:yb-48,'text-anchor':'middle','font-size':14,fill:RED,'font-weight':700},'q = 6 kN/m');
+}
+function nodes(svg){
+  const t=(x,y,s)=>mk(svg,'text',{x,y,'font-size':17,'font-weight':700,fill:'#243b6b'},s);
+  t(xA-26,yb-8,'C');t(xB+10,yb-8,'D');t(xA-26,yg+2,'A');t(xB+10,yg+2,'B');
+}
+function bars(svg,style){
+  const w=style==='gray'?6:8,cb=style==='gray'?'#a9b2c5':BEAM,cc=style==='gray'?'#a9b2c5':COL;
+  mk(svg,'line',{x1:xA,y1:yb,x2:xB,y2:yb,stroke:cb,'stroke-width':w,'stroke-linecap':'round'});
+  mk(svg,'line',{x1:xA,y1:yb,x2:xA,y2:yg,stroke:cc,'stroke-width':w,'stroke-linecap':'round'});
+  mk(svg,'line',{x1:xB,y1:yb,x2:xB,y2:yg,stroke:cc,'stroke-width':w,'stroke-linecap':'round'});
+}
+function joints(svg){[[xA,yb],[xB,yb]].forEach(p=>mk(svg,'rect',{x:p[0]-9,y:p[1]-9,width:18,height:18,rx:3,fill:'#243b6b'}));}
+function frame(svg,style){bars(svg,style);fixedSup(svg,xA);fixedSup(svg,xB);joints(svg);nodes(svg);loadQ(svg);}
+
+/* ---- 原图 ---- */
+(function(){
+  const svg=$('fig1');
+  bars(svg);fixedSup(svg,xA);fixedSup(svg,xB);joints(svg);nodes(svg);loadQ(svg);
+  mk(svg,'text',{x:(xA+xB)/2,y:yb+30,'text-anchor':'middle','font-size':16,fill:BEAM,'font-weight':700},'梁 CD：3EI');
+  mk(svg,'text',{x:xA-14,y:(yb+yg)/2,'text-anchor':'end','font-size':16,fill:COL,'font-weight':700},'柱 AC：EI');
+  mk(svg,'text',{x:xB+14,y:(yb+yg)/2,'font-size':16,fill:COL,'font-weight':700},'柱 BD：EI');
+  dimH(svg,xA,xB,yg+52,'6 m');
+  dimV(svg,xB+96,yb,yg,'4 m');dimV(svg,xA-120,yb,yg,'4 m');
+  mk(svg,'text',{x:xA,y:yg+34,'text-anchor':'middle','font-size':13,fill:'#555'},'固定支座');
+  mk(svg,'text',{x:xB,y:yg+34,'text-anchor':'middle','font-size':13,fill:'#555'},'固定支座');
+  mk(svg,'text',{x:(xA+xB)/2,y:30,'text-anchor':'middle','font-size':15,fill:'#243b6b'},'C、D 为刚节点（深色方块）');
+})();
+
+/* ---- 数据 ---- */
+const Mx=x=>-9+18*x-3*x*x;   // 梁：下拉为正
+const Mcol=y=>4.5-3.375*y;   // 左柱：内侧（右）拉为正，y 从柱底算
+function poly(svg,pts,c,fo){return mk(svg,'polygon',{points:pts.map(q=>q[0].toFixed(1)+','+q[1].toFixed(1)).join(' '),fill:c,'fill-opacity':fo||.2,stroke:c,'stroke-width':2.5,'stroke-linejoin':'round'});}
+function lab(svg,x,y,s,c,a){mk(svg,'text',{x,y,'font-size':14,'font-weight':700,fill:c,'text-anchor':a||'middle'},s);}
+
+/* ---- 梁叠加法 ---- */
+(function(){
+  const svg=$('figMb'),x0=100,x1=540,L=440,y0=150,sc=3.2;let step=1;
+  function X(m){return x0+L*m/6;}
+  function render(){
+    svg.innerHTML='';
+    mk(svg,'line',{x1:x0,y1:y0,x2:x1,y2:y0,stroke:'#555','stroke-width':3});
+    lab(svg,x0-12,y0+4,'C','#243b6b','end');lab(svg,x1+12,y0+4,'D','#243b6b','start');
+    lab(svg,x0,24,'基线（梁轴线）；下方=下侧受拉，上方=上侧受拉','#667085','start');
+    if(step===1){
+      poly(svg,[[x0,y0],[x0,y0-9*sc],[x1,y0-9*sc],[x1,y0]],'#8a4fd6',.22);
+      lab(svg,(x0+x1)/2,y0-9*sc-8,'−9（两端力矩：整根梁上侧受拉）','#8a4fd6');
+      $('infoMb').textContent='第 ① 层：两端都有 9 kN·m 的负弯矩（上侧受拉）。如果梁上没有荷载，整根梁的弯矩就是这根水平线：处处 −9。';
+    }else if(step===2){
+      const pts=[[x0,y0]];for(let i=0;i<=60;i++){const x=i/10;pts.push([X(x),y0+sc*(3*x*(6-x))]);}pts.push([x1,y0]);
+      poly(svg,pts,RED,.22);
+      lab(svg,(x0+x1)/2,y0+sc*27+18,'27（= ql²/8，简支梁跨中弯矩）',RED);
+      $('infoMb').textContent='第 ② 层：假设梁两端是简支（不受力矩），只受 q，弯矩是抛物线，跨中最大 ql²/8 = 6×36/8 = 27，下侧受拉。公式：M(x) = qx(l−x)/2 = 3x(6−x)。';
+    }else{
+      poly(svg,[[x0,y0],[x0,y0-9*sc],[x1,y0-9*sc],[x1,y0]],'#8a4fd6',.12);
+      const pts=[[x0,y0]];for(let i=0;i<=60;i++){const x=i/10;pts.push([X(x),y0+sc*3*x*(6-x)]);}pts.push([x1,y0]);poly(svg,pts,RED,.1);
+      const f=[[x0,y0-9*sc]];for(let i=0;i<=60;i++){const x=i/10;f.push([X(x),y0+sc*Mx(x)]);}f.push([x1,y0-9*sc]);
+      mk(svg,'polyline',{points:f.map(q=>q.join(',')).join(' '),fill:'none',stroke:'#1a5fb4','stroke-width':4});
+      lab(svg,x0+22,y0-9*sc-8,'−9','#8a4fd6');lab(svg,x1-22,y0-9*sc-8,'−9','#8a4fd6');
+      lab(svg,(x0+x1)/2,y0+sc*18+18,'18','#1a5fb4');
+      mk(svg,'line',{x1:(x0+x1)/2,y1:y0-9*sc,x2:(x0+x1)/2,y2:y0+sc*18,stroke:'#1a5fb4','stroke-dasharray':'4 3'});
+      $('infoMb').textContent='第 ③ 层：两层相加。跨中：27 + (−9) = 18（下拉）。梁端：0 + (−9) = −9（上拉）。粗线就是 CD 梁最终的 M 图：M(x) = −9 + 18x − 3x²。';
+    }
+    ['bm1','bm2','bm3'].forEach((id,i)=>$(id).className=(i+1===step)?'':'alt');
+  }
+  $('bm1').onclick=()=>{step=1;render();};$('bm2').onclick=()=>{step=2;render();};$('bm3').onclick=()=>{step=3;render();};
+  render();
+})();
+
+/* ---- 完整 M 图 ---- */
+(function(){
+  const svg=$('figM');frame(svg,'gray');const c='#1a5fb4',s=4;
+  const pb=[[xA,yb]];for(let i=0;i<=60;i++){const x=i/10;pb.push([xA+k*x,yb+s*Mx(x)]);}pb.push([xB,yb]);poly(svg,pb,c);
+  const col=(x0,sg)=>{const p=[[x0,yg]];for(let i=0;i<=40;i++){const y=i/10;p.push([x0+sg*s*Mcol(y),yg-k*y]);}p.push([x0,yb]);return p;};
+  poly(svg,col(xA,1),c);poly(svg,col(xB,-1),c);
+  lab(svg,xA+22,yb-9*s-6,'9',c);lab(svg,xB-22,yb-9*s-6,'9',c);lab(svg,(xA+xB)/2,yb+18*s+18,'18',c);
+  lab(svg,xA-34,yb+16,'9',c);lab(svg,xB+34,yb+16,'9',c);
+  lab(svg,xA+30,yg-6,'4.5',c);lab(svg,xB-30,yg-6,'4.5',c);
+  [xA,xB].forEach((x,i)=>{mk(svg,'circle',{cx:x,cy:yg-1.333*k,r:3.5,fill:c});lab(svg,x+(i?40:-40),yg-1.333*k+4,'M=0',c);});
+  mk(svg,'text',{x:20,y:28,'font-size':13,fill:'#667085'},'M 图（kN·m），画在受拉侧');
+})();
+
+/* ---- Q 图 ---- */
+(function(){
+  const svg=$('figQ');frame(svg,'gray');const c='#b5311a',s=3;
+  poly(svg,[[xA,yb],[xA,yb-18*s],[xB,yb+18*s],[xB,yb]],c);
+  lab(svg,xA+26,yb-18*s-6,'+18',c);lab(svg,xB-26,yb+18*s+18,'−18',c);
+  mk(svg,'circle',{cx:(xA+xB)/2,cy:yb,r:4,fill:c});lab(svg,(xA+xB)/2,yb-10,'Q=0（x=3 m）',c);
+  const h=3.375*8;
+  poly(svg,[[xA,yb],[xA+h,yb],[xA+h,yg],[xA,yg]],c);poly(svg,[[xB,yb],[xB-h,yb],[xB-h,yg],[xB,yg]],c);
+  lab(svg,xA+h+36,(yb+yg)/2,'3.375',c);lab(svg,xB-h-36,(yb+yg)/2,'3.375',c);
+  mk(svg,'text',{x:20,y:28,'font-size':13,fill:'#667085'},'Q 图（kN）');
+})();
+
+/* ---- 变形动画：对 EI 取 1，对 M/EI 数值积分 ---- */
+(function(){
+  const svg=$('figD');
+  const N=60,th=9;
+  // 梁：w''=-M/(3), w'(0)=th, w(0)=0；w 向下为正
+  const wB=[0];{let sl=th,w=0,pm=Mx(0)/3;for(let i=1;i<=N;i++){const x=6*i/N,m=Mx(x)/3,sn=sl-(pm+m)/2*(6/N);w+=(sl+sn)/2*(6/N);wB.push(w);sl=sn;pm=m;}}
+  // 柱：u''=-M (EI=1)，u(0)=u'(0)=0，u 向右为正（左柱）
+  const uC=[0];{let sl=0,u=0,pm=-Mcol(0);for(let i=1;i<=N;i++){const y=4*i/N,m=-Mcol(y),sn=sl+(pm+m)/2*(4/N);u+=(sl+sn)/2*(4/N);uC.push(u);sl=sn;pm=m;}}
+  window._chk={wEnd:wB[N],uTop:uC[N],wMid:wB[N/2],slopeEnd:null};
+  function render(t){
+    svg.innerHTML='';const s=2.4*t;$('vD').textContent=Math.round(t*100)+'%';
+    mk(svg,'line',{x1:xA,y1:yb,x2:xB,y2:yb,stroke:'#c3cadb','stroke-width':2,'stroke-dasharray':'6 5'});
+    mk(svg,'line',{x1:xA,y1:yb,x2:xA,y2:yg,stroke:'#c3cadb','stroke-width':2,'stroke-dasharray':'6 5'});
+    mk(svg,'line',{x1:xB,y1:yb,x2:xB,y2:yg,stroke:'#c3cadb','stroke-width':2,'stroke-dasharray':'6 5'});
+    fixedSup(svg,xA);fixedSup(svg,xB);
+    const pl=(pts,c)=>mk(svg,'polyline',{points:pts.map(q=>q[0].toFixed(1)+','+q[1].toFixed(1)).join(' '),fill:'none',stroke:c,'stroke-width':7,'stroke-linecap':'round','stroke-linejoin':'round'});
+    pl(wB.map((w,i)=>[xA+300*i/N,yb+s*w]),BEAM);
+    pl(uC.map((u,i)=>[xA+s*u,yg-200*i/N]),COL);
+    pl(uC.map((u,i)=>[xB-s*u,yg-200*i/N]),COL);
+    const rotDeg=Math.atan(s*th/50)*180/Math.PI;
+    mk(svg,'rect',{x:xA-10,y:yb-10,width:20,height:20,rx:3,fill:'#243b6b',transform:`rotate(${rotDeg} ${xA} ${yb})`});
+    mk(svg,'rect',{x:xB-10,y:yb-10,width:20,height:20,rx:3,fill:'#243b6b',transform:`rotate(${-rotDeg} ${xB} ${yb})`});
+    lab(svg,xA-22,yb-12,'C','#243b6b');lab(svg,xB+22,yb-12,'D','#243b6b');
+    lab(svg,(xA+xB)/2,yb+s*wB[N/2]+34,'梁中间下垂','#2f6fdb');
+    lab(svg,xA-34,(yb+yg)/2+s*uC[N/2]*0,'柱中部向外鼓','#e07b00','end');
+    mk(svg,'text',{x:20,y:28,'font-size':13,fill:'#667085'},'虚线 = 原位置；实线 = 变形后（夸张放大）');
+  }
+  let raf=null;
+  $('tD').oninput=()=>{cancelAnimationFrame(raf);render(+$('tD').value/100);};
+  $('bD').onclick=()=>{cancelAnimationFrame(raf);const t0=performance.now(),d=3000;(function st(n){const p=Math.min(1,(n-t0)/d),e=1-Math.pow(1-p,3);$('tD').value=e*100;render(e);if(p<1)raf=requestAnimationFrame(st);})(t0);};
+  render(0);
+})();
+</script>
+</body>
+</html>

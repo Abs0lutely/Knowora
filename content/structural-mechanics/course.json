@@ -1,0 +1,9 @@
+{
+  "name": "结构力学",
+  "textbook": "待补充",
+  "chapters": [
+    { "id": "ch01-foundations", "title": "基础概念与简支梁内力图" },
+    { "id": "ch02-force-method", "title": "力法与图乘法" },
+    { "id": "ch03-displacement-method", "title": "位移法" }
+  ]
+}
