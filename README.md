@@ -2,6 +2,10 @@
 
 面向大学生自学的知识点网站。每篇 HTML 文档独立呈现一个主题，网站首页按课程和主题整理文档。
 
+## 在线网站
+
+[打开 Knowora 知识点网站](https://abs0lutely.github.io/Knowora/)
+
 ## 本地构建与预览
 
 需要 Python 3.10 或更新版本。构建脚本只使用 Python 标准库：
